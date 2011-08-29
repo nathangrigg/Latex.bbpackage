@@ -1,0 +1,7 @@
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+#SELSTART#\fancyhead[LE,RO]{\slshape \rightmark} %these are all defaults
+\fancyhead[LO,RE]{\slshape \leftmark}  %customize or delete
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}#SELEND#

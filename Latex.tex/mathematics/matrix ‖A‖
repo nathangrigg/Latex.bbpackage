@@ -1,0 +1,4 @@
+\begin{Vmatrix}
+	#SELSTART#a & b \\
+	c & d #SELEND#
+\end{Vmatrix}

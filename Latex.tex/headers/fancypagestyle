@@ -1,0 +1,6 @@
+\fancypagestyle{plain}{	%redefine style
+\fancyhf{} 				%clear
+\fancyhead[LE,RO]{This is a header}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}

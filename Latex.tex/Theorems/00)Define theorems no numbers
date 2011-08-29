@@ -1,0 +1,7 @@
+\theoremstyle{definition}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{lemma}{Lemma}
+\newtheorem*{proposition}{Proposition}
+\newtheorem*{corollary}{Corollary}
+\newtheorem*{definition}{Definition}
+\newtheorem*{remark}{Remark}

@@ -1,0 +1,4 @@
+\begin{bmatrix}
+	#SELSTART#a & b \\
+	c & d #SELEND#
+\end{bmatrix}
