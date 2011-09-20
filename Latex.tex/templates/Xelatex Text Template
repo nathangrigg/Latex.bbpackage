@@ -1,0 +1,22 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+\documentclass[11pt,letterpaper]{scrartcl}
+
+\usepackage{graphicx, amssymb}
+\usepackage{fontspec,xltxtra,xunicode}
+\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\setromanfont{Georgia}\setsansfont{Helvetica}\setmonofont{Monaco}
+\KOMAoptions{DIV=last}
+
+\usepackage{hyperref}\urlstyle{same}
+\setcounter{secnumdepth}{0}
+
+\title{#INSERTION#}
+\author{#INSERTION#}
+
+\begin{document}
+\maketitle
+
+#INSERTION#
+
+\end{document}

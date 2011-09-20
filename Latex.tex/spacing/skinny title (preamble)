@@ -1,0 +1,11 @@
+% adjust the title to not leave space for author
+\makeatletter
+\renewcommand{\@maketitle}{
+\newpage
+ \begin{center}%
+  {\LARGE\bf \@title \par}%
+%ifdef \@author
+{\large \@author \par}%
+%endif
+ \end{center}%
+ \par} \makeatother

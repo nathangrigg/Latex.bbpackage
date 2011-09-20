@@ -1,0 +1,15 @@
+\documentclass{letter}
+\usepackage[avery5160label,nocapaddress]{envlab}
+% Envlab options. For more info run `texdoc elguide`
+% Label sizes: avery5160label, avery5161label, avery5162label,
+%   avery5163label, avery5164label, avery5262label, herma4625label
+% Options: noprintbarcodes,alwaysbarcodes,
+\makelabels
+
+\begin{document}
+%\FirstLabel{row}{col}
+\startlabels
+\mlabel{}{%
+#PLACEHOLDERSTART#To Address#PLACEHOLDEREND#
+}
+\end{document}

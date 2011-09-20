@@ -1,0 +1,17 @@
+\documentclass{letter}
+\usepackage[nocapaddress]{envlab}
+% Envlab options. For more info run `texdoc elguide`
+% Envelope sizes: executiveenvelope, bookletenvelope,
+%   personalenvelope,c6envelope, c65envelope, c5envelope, dlenvelope
+% Options: norotateenvelopes,leftenvelopes,rightenvelopes
+%   noprintbarcodes,alwaysbarcodes,noprintreturnaddress
+\makelabels
+
+\begin{document}
+\startlabels
+\mlabel{%
+#PLACEHOLDERSTART#From Address#PLACEHOLDEREND#
+}{%
+#PLACEHOLDERSTART#To Address#PLACEHOLDEREND#
+}
+\end{document}

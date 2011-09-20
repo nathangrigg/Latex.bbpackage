@@ -1,0 +1,15 @@
+\documentclass[11pt,letterpaper]{amsart}
+
+
+%packages
+\usepackage{graphicx}
+
+\title{#INSERTION#}
+\author{#INSERTION#}
+
+\begin{document}
+\maketitle
+
+#INSERTION#
+
+\end{document}
