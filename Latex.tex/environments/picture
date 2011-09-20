@@ -1,0 +1,5 @@
+\setlength{\unitlength}{#PLACEHOLDERSTART#length#PLACEHOLDEREND#}
+\begin{picture}(#PLACEHOLDERSTART#width#PLACEHOLDEREND#,#PLACEHOLDERSTART#height#PLACEHOLDEREND#)(#PLACEHOLDERSTART#x offset#PLACEHOLDEREND#,#PLACEHOLDERSTART#y offset#PLACEHOLDEREND#)
+	\put(0,5){\circle*{0.5}}
+	\put(1,5){\line(-1,-1){1}}
+\end{picture}

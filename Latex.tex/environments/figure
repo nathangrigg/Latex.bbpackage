@@ -1,0 +1,6 @@
+\begin{figure}[htbp]
+	\caption{#INSERTION#}
+	\label{figure:#INSERTION#}
+	\centering
+	#INSERTION#
+\end{figure}
