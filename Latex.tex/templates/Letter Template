@@ -1,0 +1,31 @@
+\documentclass[12pt,letterpaper]{scrlttr2}
+\usepackage[english]{babel}
+
+%:Options
+%\KOMAoptions{parskip=full*,fromphone,fromrule,enlargefirstpage,subject=titled}
+\KOMAoptions{fromemail,fromalign=right,backaddress=false,foldmarks=TBp}
+
+% US-style signature line
+\let\raggedsignature\relax
+\makeatletter\@setplength{sigindent}{0.4\textwidth}\makeatother
+
+%:Return Address
+\setkomavar{fromname}{#SELSTART##NAME##SELEND#}
+\setkomavar{fromaddress}{#PLACEHOLDERSTART#From Address#PLACEHOLDEREND#}
+\setkomavar{fromemail}[]{#PLACEHOLDERSTART#From email#PLACEHOLDEREND#}
+
+%:Date and Subject
+\setkomavar{date}{#PLACEHOLDERSTART#Date#PLACEHOLDEREND#}
+\setkomavar{subject}{#PLACEHOLDERSTART#Subject#PLACEHOLDEREND#}
+
+%:Start of letter
+\begin{document}
+\begin{letter}{#PLACEHOLDERSTART#To Address#PLACEHOLDEREND#}
+\opening{#PLACEHOLDERSTART#Opening#PLACEHOLDEREND#,}
+
+#PLACEHOLDERSTART#Text of letter#PLACEHOLDEREND#
+
+
+\closing{Sincerely,}
+\end{letter}
+\end{document}
