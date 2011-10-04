@@ -3,7 +3,7 @@
 \documentclass[11pt,letterpaper]{scrartcl}
 
 \usepackage{graphicx, amssymb}
-\usepackage{fontspec,xltxtra,xunicode}
+\usepackage{fontspec}
 \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
 \setromanfont{Georgia}\setsansfont{Helvetica}\setmonofont{Monaco}
 \KOMAoptions{DIV=last}
