@@ -2,6 +2,14 @@
 
 This is a collection of tools that I used to write Latex in BBEdit.
 
+# Installation
+
+Place the package `Latex.bbpackage` in
+`~/Library/Application Support/BBEdit/Packages/`.
+
+Alternatively, you can look into the package on only install
+the pieces that you want.
+
 # Tools
 
 ## Declare Math Operator applescript
@@ -20,8 +28,3 @@ TeXShop needs to be installed on your computer.
 For best results, you should check the box marked "Configure for External
 Editor" in the "On Startup" section of the "Source" tab of the TeXShop
 preferences.
-
-# Usage
-
-Place the scripts in `~/Library/Application Support/BBEdit/Scripts` and run
-them by selecting them from the scripts menu of BBEdit.
