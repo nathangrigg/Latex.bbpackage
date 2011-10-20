@@ -4,10 +4,11 @@
 
 
 %packages
-\usepackage{graphicx,amssymb,amsmath}
+\usepackage{graphicx,amssymb}
+\usepcakge{mathtools} %includes amsmath
 
 %math and other fonts
-\usepackage{mathspec}
+\usepackage{mathspec} %includes fixltx2e
 \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
 \setromanfont{Baskerville}\setsansfont{Helvetica Neue}\setmonofont{Monaco}
 \KOMAoptions{DIV=last}

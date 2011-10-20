@@ -2,7 +2,7 @@
 
 
 %packages
-\usepackage{graphicx}
+\usepackage{graphicx,mathtools,fixltx2e,amssymb}
 
 \title{#INSERTION#}
 \author{#INSERTION#}

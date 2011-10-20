@@ -45,7 +45,7 @@ the result will be `\\mathbb{}`, which is not correct.
 I find the following scripts useful. They are written by me unless otherwise
 noted.
 
-## Typeset with TeXShop applescript
+## Typeset with TeXShop
 
 This opens the pdf version of your Latex document using TeXShop and asks
 TeXShop to typeset it.
@@ -56,7 +56,7 @@ For best results, you should check the box marked "Configure for External
 Editor" in the "On Startup" section of the "Source" tab of the TeXShop
 preferences.
 
-## Declare Math Operator applescript
+## Declare Math Operator
 
 This applescript prompts for the two arguments of the `\DeclareMathOperator`
 command, and then inserts the appropriate command in the preamble, all without
@@ -78,6 +78,12 @@ To make this useful to you, you will need to put the `\RevisionInfo` command som
 
 The idea is that when you usually typeset, the info will not be printed. Only under certain circumstances (e.g. you are going to print it out or email it to someone) do you want to include the revision information. One benefit to this method is that if someone else needs to typeset the document and they do not have the full git repository or even know what git is, everything will work.
 
+This also requires TeXShop to be installed on your computer.
+
+## Check Latex Syntax
+
+This is a script by Ramón M. Figueroa-Centeno that invokes ChkTeX on your document and displays the results in a nice format. You need to have ChkTeX installed for this to work. (For more information on ChkTeX, see
+<http://baruch.ev-en.org/proj/chktex/>.) ChkTeX is included in the TeXLive package. Alternatively, if you use homebrew, you can install it using `brew install chktex`.
 
 # License
 
@@ -94,17 +100,17 @@ modification, are permitted provided that the following conditions are met:
 * Redistributions in binary form must reproduce the above copyright
   notice, this list of conditions and the following disclaimer in the
   documentation and/or other materials provided with the distribution.
-* Neither the name of the Nathan Grigg nor the
+* Neither the name of this package nor the
   names of its contributors may be used to endorse or promote products
   derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL NATHAN GRIGG BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+This software is provided by the copyright holders and contributors "as is" and
+any express or implied warranties, including, but not limited to, the implied
+warranties of merchantability and fitness for a particular purpose are
+disclaimed. In no event shall Nathan Grigg be liable for any
+direct, indirect, incidental, special, exemplary, or consequential damages
+(including, but not limited to, procurement of substitute goods or services;
+loss of use, data, or profits; or business interruption) however caused and
+on any theory of liability, whether in contract, strict liability, or tort
+(including negligence or otherwise) arising in any way out of the use of this
+software, even if advised of the possibility of such damage.

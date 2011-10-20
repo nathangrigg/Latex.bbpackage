@@ -2,8 +2,8 @@
 %!TEX encoding = UTF-8 Unicode
 \documentclass[11pt,letterpaper]{scrartcl}
 
-\usepackage{graphicx, amssymb}
-\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{fontspec} %includes fixltx2e
 \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
 \setromanfont{Georgia}\setsansfont{Helvetica}\setmonofont{Monaco}
 \KOMAoptions{DIV=last}
