@@ -1,0 +1,4 @@
+\begin{cases*}
+	#PLACEHOLDERSTART#math#PLACEHOLDEREND# & #PLACEHOLDERSTART#text#PLACEHOLDEREND#
+\end{cases*}
+
