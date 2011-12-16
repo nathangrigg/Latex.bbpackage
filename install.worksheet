@@ -5,6 +5,6 @@
 	<key>CurrentWorkingDirectory</key>
 	<string>/Users/aias</string>
 	<key>WorksheetContents</key>
-	<string># Install dependancies for the LaTeX bundle# =========================================================# Using HOMEBREW?brew install chktex# Using MacPorts?sudo /opt/local/bin/port install texlive-bin-extra# warning: installs a lot of packages, including X11 </string>
+	<string># Install dependancies for the LaTeX bundle# =========================================================# Using HOMEBREW?brew install chktex# Using MacPorts?sudo /opt/local/bin/port install texlive-bin-extra</string>
 </dict>
 </plist>
