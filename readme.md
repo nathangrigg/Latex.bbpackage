@@ -17,7 +17,7 @@ any of the scripts with versions of BBEdit less than 10.
 
 # Philosophy
 
-The purpose of the package is to make things easier for me (and you) to
+The purpose of the package is to make things easier for me(Nathan), and you, to
 typeset Latex using BBEdit. The purpose is not to make a complete catalog
 of all commonly used latex commands.
 
@@ -31,7 +31,7 @@ while, so that you are likely to forget their names or how to use them.
 commands which lend themselves well to keyboard shortcuts (such as `inverse`, `mathbb`, and `display math`). You are responsible for setting your own
 keyboard shortcuts using the clippings palette.
 
-If you have anything that you think I should add, feel free to contact me.
+If you have anything that you think I should add, feel free to contact me (Nathan).
 
 **A note on using clippings:**
 Clippings do not have backslashes in their names, but they do have
