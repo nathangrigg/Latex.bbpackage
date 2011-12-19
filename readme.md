@@ -7,17 +7,22 @@ This is a collection of clippings and scripts that I used to write Latex in BBEd
 If you are using BBEdit 10.1 or newer, you can drag the package `Latex.bbpackage` onto the BBEdit dock icon, and it will install
 it for you.
 
-If you are using BBEdit 10 or newer, you can put the package
-`Latex.bbpackage` into the folder `~/Library/Application Support/BBEdit/Packages/`.
+You can also do it on the command line:
 
-If you are using a version of BBEdit less than 10, you can look into
-the package and install the pieces in the appropriate locations
-within `~/Library/Application Support/BBEdit/`. I have not tested
-any of the scripts with versions of BBEdit less than 10.
+    $ cd Library/Application\ Support/BBEdit/
+    $ mkdir Packages # if it doesn't already exists
+    $ cd Packages
+    $ git clone git://github.com/rwilcox/BBEdit-latex.bbpackage.git
+    
+Since, at that point, you're already in the proper directory, you may want to open up the README markdown document, and INSTALL shell worksheet (to install software this package depends on)
+
+	$ bbedit BBEdit-latex.bbpackage/readme.md
+	$ bbedit BBEdit-latex.bbpackage/install.worksheet
+
 
 # Philosophy
 
-The purpose of the package is to make things easier for me (and you) to
+The purpose of the package is to make things easier for me(Nathan), and you, to
 typeset Latex using BBEdit. The purpose is not to make a complete catalog
 of all commonly used latex commands.
 
@@ -31,7 +36,7 @@ while, so that you are likely to forget their names or how to use them.
 commands which lend themselves well to keyboard shortcuts (such as `inverse`, `mathbb`, and `display math`). You are responsible for setting your own
 keyboard shortcuts using the clippings palette.
 
-If you have anything that you think I should add, feel free to contact me.
+If you have anything that you think I should add, feel free to contact me (Nathan).
 
 **A note on using clippings:**
 Clippings do not have backslashes in their names, but they do have

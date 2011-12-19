@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CurrentWorkingDirectory</key>
+	<string>/Users/aias</string>
+	<key>WorksheetContents</key>
+	<string># Install dependancies for the LaTeX bundle# =========================================================# Using HOMEBREW?brew install chktex# Using MacPorts?sudo /opt/local/bin/port install texlive-bin-extra</string>
+</dict>
+</plist>
