@@ -1,18 +1,17 @@
 # Description
 
-This is a collection of clippings and scripts that I used to write Latex in BBEdit.
+This is a collection of clippings and scripts used to write Latex in BBEdit.
 
 # Installation
 
-If you are using BBEdit 10.1 or newer, you can drag the package `Latex.bbpackage` onto the BBEdit dock icon, and it will install
-it for you.
+If you are using BBEdit 10.1 or newer, you can drag the `.bbpackage` file onto the BBEdit dock icon, and it will install it for you.
 
 You can also do it on the command line:
 
     $ cd Library/Application\ Support/BBEdit/
     $ mkdir Packages # if it doesn't already exists
     $ cd Packages
-    $ git clone git://github.com/rwilcox/BBEdit-latex.bbpackage.git
+    $ git clone git://github.com/nathan11g/BBEdit-latex.bbpackage.git
     
 Since, at that point, you're already in the proper directory, you may want to open up the README markdown document, and INSTALL shell worksheet (to install software this package depends on)
 
@@ -22,50 +21,31 @@ Since, at that point, you're already in the proper directory, you may want to op
 
 # Philosophy
 
-The purpose of the package is to make things easier for me(Nathan), and you, to
-typeset Latex using BBEdit. The purpose is not to make a complete catalog
-of all commonly used latex commands.
+The purpose of the package is to make things easier to typeset Latex using BBEdit. The purpose is not to make a complete catalog of all commonly used latex commands.
 
-In particular, commands without arguments such as `\alpha` or `\times` are almost never included as clippings. The reason is that BBEdit automatically
-suggests words that you have been using in your document, which is more
-likely to be helpful than a list of all possible keywords.
+In particular, commands without arguments such as `\alpha` or `\times` are almost never included as clippings. The reason is that BBEdit automatically suggests words that you have been using in your document, which is more likely to be helpful than a list of all possible keywords.
 
-I also like to include commands that may be useful, but only once in a
-while, so that you are likely to forget their names or how to use them.
-(For me, accents and matrices fall into this category.) I also include
-commands which lend themselves well to keyboard shortcuts (such as `inverse`, `mathbb`, and `display math`). You are responsible for setting your own
-keyboard shortcuts using the clippings palette.
-
-If you have anything that you think I should add, feel free to contact me (Nathan).
+Also included are commands that may be useful, but only once in a while, so that you are likely to forget their names or how to use them. (such as accents and matrices). Commands which lend themselves well to keyboard shortcuts (such as `inverse`, `mathbb`, and `display math`) are included as well. You are responsible for setting your own keyboard shortcuts using the clippings palette.
 
 **A note on using clippings:**
-Clippings do not have backslashes in their names, but they do have
-backslashes in their definitions. So if you begin typing `mathbb` and
-then select the correct clipping, `\mathbb{}` will be inserted. On the
-other hand, if you begin typing `\mathbb` and then select the clipping,
-the result will be `\\mathbb{}`, which is not correct.
+
+Clippings do not have backslashes in their names, but they do have backslashes in their definitions. So if you begin typing `mathbb` and then select the correct clipping, `\mathbb{}` will be inserted. On the other hand, if you begin typing `\mathbb` and then select the clipping, the result will be `\\mathbb{}`, which is not correct.
 
 # Scripts
 
-I find the following scripts useful. They are written by me unless otherwise
-noted.
+I find the following scripts useful. They are written by Nathan unless otherwise noted.
 
 ## Typeset with TeXShop
 
-This opens the pdf version of your Latex document using TeXShop and asks
-TeXShop to typeset it.
+This opens the pdf version of your Latex document using TeXShop and asks TeXShop to typeset it.
 
 TeXShop needs to be installed on your computer.
 
-For best results, you should check the box marked "Configure for External
-Editor" in the "On Startup" section of the "Source" tab of the TeXShop
-preferences.
+For best results, you should check the box marked "Configure for External Editor" in the "On Startup" section of the "Source" tab of the TeXShop preferences.
 
 ## Declare Math Operator
 
-This applescript prompts for the two arguments of the `\DeclareMathOperator`
-command, and then inserts the appropriate command in the preamble, all without
-losing your place in the document. Definitely worth a keyboard shortcut.
+This applescript prompts for the two arguments of the `\DeclareMathOperator` command, and then inserts the appropriate command in the preamble, all without losing your place in the document. Definitely worth a keyboard shortcut.
 
 ## TeX Documentation
 
