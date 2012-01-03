@@ -5,7 +5,7 @@
 
 %packages
 \usepackage{graphicx,amssymb}
-\usepcakge{mathtools} %includes amsmath
+\usepackage{mathtools} %includes amsmath
 
 %math and other fonts
 \usepackage{mathspec} %includes fixltx2e
