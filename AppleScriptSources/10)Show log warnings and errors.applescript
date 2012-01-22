@@ -1,13 +1,18 @@
 -- Get path to scripts
-tell application "Finder"
-	set _resources to (POSIX path of ((container of (container of (path to me))) as text)) & "Resources/"
-	try
-		do shell script "ls " & quoted form of _resources
-	on error
-		display dialog "Unable to get the \"Resources\" folder of the Latex BBEdit package. For example, this will happen if you move scripts around inside the package." buttons {"Quit"} default button "Quit"
-		return
-	end try
-end tell
+try
+	set _path to term(POSIX path of (path to me), "/Contents/")
+on error
+	display dialog "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." buttons {"Quit"} default button "Quit"
+	return
+end try
+set _resources to _path & "Resources/"
+
+try
+	do shell script "ls " & quoted form of _resources
+on error
+	display dialog "Unable to get the \"Resources\" folder of the Latex BBEdit package. For example, this will happen if you move scripts around inside the package." buttons {"Quit"} default button "Quit"
+	return
+end try
 
 -- save text item delimiters
 set _delims to AppleScript's text item delimiters
@@ -92,3 +97,10 @@ tell application "BBEdit"
 	make new results browser with data err_list with properties {name:"Log Warnings and Errors"}
 
 end tell
+
+on term(str, terminator)
+	set _l to length of terminator
+	set _n to (offset of terminator in str)
+	if _n is 0 then error "Not found in string"
+	return characters 1 thru (_l + _n - 1) of str as string
+end term

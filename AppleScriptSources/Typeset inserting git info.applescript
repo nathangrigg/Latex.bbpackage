@@ -24,13 +24,15 @@ on error
 	return
 end try
 
-set _me to POSIX path of (path to me)
-set AppleScript's text item delimiters to "/"
-set _path to (text items 1 thru -2 of (POSIX path of (path to me)) as string)
-set AppleScript's text item delimiters to _delims
+try
+	set _path to term(POSIX path of (path to me), "/Contents/")
+on error
+	display dialog "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." buttons {"Quit"} default button "Quit"
+	return
+end try
 
 try
-	set typeset_script to load script POSIX file ("/" & _path & "/" & typeset_script_name as string)
+	set typeset_script to load script POSIX file (_path & "Scripts/" & typeset_script_name as string)
 on error
 	display dialog "Cannot load script \"" & typeset_script_name & "\", which is required." buttons {"Quit"} default button "Quit"
 	return
@@ -39,3 +41,10 @@ end try
 set typeset_script's gitinfo to _info
 
 typeset_script's typeset()
+
+on term(str, terminator)
+	set _l to length of terminator
+	set _n to (offset of terminator in str)
+	if _n is 0 then error "Not found in string"
+	return characters 1 thru (_l + _n - 1) of str as string
+end term
