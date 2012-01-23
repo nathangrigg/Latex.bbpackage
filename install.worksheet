@@ -2,7 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CurrentWorkingDirectory</key>
+	<string>/Users/grigg</string>
 	<key>WorksheetContents</key>
-	<string># Install dependancies for the LaTeX bundle# =========================================================# Using HOMEBREW?brew install chktex# Using MacPorts?sudo /opt/local/bin/port install texlive-bin-extra</string>
+	<string># Set up the LaTeX bundle and Install dependencies# ================================================# Where are your Latex executables?which latex# If they aren't in /usr/texbin, some scripts need adjusted.# Hold down the option key and click on the following scripts in# the scripts menu:##   - Typeset Latex#   - TeX Documentation Lookup# Do you want to use something other than Skim as a viewer? # You'll need to edit the following scripts (use the option key)##   - Typset Latex#   - Open pdf# Is chktex installed?which chktex# If not, you can install it using HOMEBREW:brew install chktex# or macports:sudo /opt/local/bin/port install texlive-bin-extra# If it isn't in /usr/texbin, you'll need to edit the following script# with the correct path (use the option key)# #    Check Latex Semantics</string>
 </dict>
 </plist>
