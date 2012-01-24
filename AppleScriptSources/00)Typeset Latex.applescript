@@ -73,13 +73,12 @@ on typeset()
 	try
 		-- this is the standard typeset
 		if gitinfo is "" then
-			-- run latex
-			do shell script "cd " & quoted form of _folder & " ; " & texbin & "/" & _tex_program & " -interaction=batchmode -synctex=1 " & quoted form of _basename
+			do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & quoted form of _basename
 		else
 			-- this is typeset adding git info
-			do shell script "cd " & quoted form of _folder & " ; " & texbin & "/" & _tex_program & " -interaction=batchmode -synctex=1 " & "'" & gitinfo & " \\input{\"" & _basename & "\"}'"
+			do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & "'" & gitinfo & " \\input{\"" & _basename & "\"}'"
 		end if
-	on error
+	on error errMsg
 
 		set AppleScript's text item delimiters to "."
 		set _logfile to ((text items 1 thru -2 of _filename) as string) & ".log" as string
@@ -95,7 +94,7 @@ on typeset()
 		end try
 
 		if _result is "" then
-			display dialog "Latex command returned an error, but no errors are found in the log. (command: " & texbin & "/" & _tex_program & ")"
+			display dialog "Latex command returned an error, but no errors are found in the log." & return & return & errMsg buttons {"Quit"} default button "Quit"
 			return
 		end if
 

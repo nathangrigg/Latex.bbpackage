@@ -1,0 +1,9 @@
+0.2
+	* New script "Typeset Latex" removes the need for TeXShop
+	* New script "Open pdf" integrates with Skim and synctex
+	* Ability to use any pdf viewer
+	* New script "Show log warnings and errors" gives errors in a nice format
+	* Several new clippings
+
+0.1
+	* First version

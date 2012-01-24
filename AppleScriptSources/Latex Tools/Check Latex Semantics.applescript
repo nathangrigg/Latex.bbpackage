@@ -1,4 +1,5 @@
-property chktex_path: "/usr/texbin/chktex"
+-- set this to the location of chktex
+property texbin: "/usr/texbin/"
 
 (*
 ChkTeX for BBEdit
@@ -100,8 +101,8 @@ on ChkteX()
 		%t Part of line after error (ÔSÕ + 1).
 *)
 
-	set command to "cd \"" & texFileDir & "\"; "
-	set command to command & quoted form of chktex_path & " -q -f \"%k%b%l%b%m%b%f%b%c%b%s"
+	set command to "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of texFileDir & " ; "
+	set command to command & "chktex -q -f \"%k%b%l%b%m%b%f%b%c%b%s"
 	set command to command & newline & "\" " & quoted form of texFileName
 	try
 		set check_result to do shell script command
