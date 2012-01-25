@@ -11,10 +11,12 @@ def search(s,head):
     else:
       return ""
   except:
+    sys.stderr.write("Invalid regular expression")
     sys.exit(1)
 
 
 if len(sys.argv) == 1:
+  sys.stderr.write("At least one argument is required")
   sys.exit(1)
 
 filename = sys.argv[-1]

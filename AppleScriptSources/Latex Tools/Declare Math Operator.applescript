@@ -1,15 +1,15 @@
 -- Title for all the dialog boxes
 set _title to "Declare Math Operator"
 tell application "BBEdit"
-	
+
 	set _doc to front document
 	set _cursor_position to selection
 	set _options to {search mode:literal, starting at top:true, wrap around:false, backwards:false, case sensitive:true, match words:false, extend selection:false}
-	
+
 	--Find place where we are going to insert stuff
-	-- search for other DeclareMathOperators	
+	-- search for other DeclareMathOperators
 	set _found to find "\\DeclareMathOperator" searching in text 1 of _doc options _options
-	
+
 	if found of _found then
 		set _text to "\\DeclareMathOperator"
 		set _newline to return
@@ -50,7 +50,7 @@ end tell
 
 -- Now get the text of the math operator
 -- use the command name with the first character removed as a guess
-set _guess to characters 2 through end of _command_name as string
+set _guess to text 2 through end of _command_name
 try
 	set _result to display dialog "Text of the math operator (e.g. sin)" with title _title default answer _guess
 	set _command_text to text returned of _result
@@ -64,10 +64,10 @@ tell application "BBEdit"
 	set _insert_old to _text
 	set _insert_length to length of _insert_new
 	set text of _location to _insert_new & _insert_old
-	
+
 	set _offset to characterOffset of _cursor_position
 	set _length to length of _cursor_position
-	
+
 	if _length = 0 then
 		select insertion point before character (_offset + _insert_length) of _doc
 	else

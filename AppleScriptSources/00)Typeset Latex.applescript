@@ -48,8 +48,8 @@ on typeset()
 	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
 	try
 		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
-	on error
-		display dialog "Error extracting directives from file (python script directives.py)"
+	on error errMsg
+		display dialog "Error extracting directives from file (python script directives.py)" & return & return & errMsg
 		return
 	end try
 
@@ -187,5 +187,5 @@ on term(str, terminator)
 	set _l to length of terminator
 	set _n to (offset of terminator in str)
 	if _n is 0 then error "Not found in string"
-	return characters 1 thru (_l + _n - 1) of str as string
+	return text 1 thru (_l + _n - 1) of str
 end term

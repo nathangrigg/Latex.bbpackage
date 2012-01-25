@@ -46,5 +46,5 @@ on term(str, terminator)
 	set _l to length of terminator
 	set _n to (offset of terminator in str)
 	if _n is 0 then error "Not found in string"
-	return characters 1 thru (_l + _n - 1) of str as string
+	return text 1 thru (_l + _n - 1) of str
 end term
