@@ -26,13 +26,22 @@ end try
 
 set _script to _path & "Resources/directives.py"
 try
-	set _root to do shell script quoted form of _script & " root " & quoted form of _filename
+	set _result to do shell script quoted form of _script & " root program " & quoted form of _filename
+	set _root to paragraph 1 of _result
+	set _tex_program to paragraph 2 of _result
 on error
 	set _root to _filename
+	set _tex_program to "pdflatex"
 end try
 
+if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains _tex_program then
+	set _extension to ".dvi"
+else
+	set _extension to ".pdf"
+end if
+
 set AppleScript's text item delimiters to "."
-set _pdf to ((text items 1 thru -2 of _root) as string) & ".pdf" as string
+set _pdf to ((text items 1 thru -2 of _root) as string) & _extension as string
 set AppleScript's text item delimiters to _delims
 
 --open in viewer

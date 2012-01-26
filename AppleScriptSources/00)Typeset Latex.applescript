@@ -159,8 +159,14 @@ on typeset()
 		end tell
 	end try
 
+	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains _tex_program then
+		set _extension to ".dvi"
+	else
+		set _extension to ".pdf"
+	end if
+
 	set AppleScript's text item delimiters to "."
-	set _pdf to ((text items 1 thru -2 of _filename) as string) & ".pdf" as string
+	set _pdf to ((text items 1 thru -2 of _filename) as string) & _extension as string
 	set AppleScript's text item delimiters to _delims
 
 	--if using skim, you can do forward search
