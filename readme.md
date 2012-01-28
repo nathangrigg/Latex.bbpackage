@@ -2,12 +2,15 @@
 
 This is a collection of scripts and clippings used to write Latex in BBEdit.
 
+You can download the package at <http://nb.nathanamy.org/latex-bbpackage> or
+the git repository at <http://github.com/nathan11g/Latex.bbpackage>
+
 # Installation
 
-If you are using BBEdit 10.1 or newer, you can drag the `.bbpackage` file onto
-the BBEdit dock icon, and it will install it for you.
+If you are using BBEdit 10.1 or newer, you can drag the `Latex.bbpackage`
+package onto the BBEdit dock icon, and it will install it for you.
 
-You can also do it on the command line:
+Or you can clone the git repository from the command line
 
     $ cd Library/Application\ Support/BBEdit/
     $ mkdir Packages # if it doesn't already exist
