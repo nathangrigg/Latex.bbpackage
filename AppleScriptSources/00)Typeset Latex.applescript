@@ -1,6 +1,7 @@
 -- User configurable varaibles
 property texbin : "/usr/texbin"
 property viewer : "Skim"
+property synctex : false
 
 -- Don't change this
 property gitinfo : ""
@@ -169,23 +170,19 @@ on typeset()
 	set _pdf to ((text items 1 thru -2 of _filename) as string) & _extension as string
 	set AppleScript's text item delimiters to _delims
 
-	--if using skim, you can do forward search
 	if viewer is "Skim" then
+		if synctex then
 
-		try
-			do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
-		on error
-			tell application viewer
-				activate
-				open _pdf
-			end tell
-		end try
+			try
+				do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
+			on error
+				skim_reload(_pdf)
+			end try
+		else
+			skim_reload(_pdf)
+		end if
 	else
-
-		tell application viewer
-			activate
-			open _pdf
-		end tell
+		do shell script "open -a " & quoted form of viewer & " " & quoted form of _pdf
 	end if
 end typeset
 
@@ -195,3 +192,10 @@ on term(str, terminator)
 	if _n is 0 then error "Not found in string"
 	return text 1 thru (_l + _n - 1) of str
 end term
+
+on skim_reload(_filename)
+	tell application "Skim"
+		set _window to open _filename
+		revert _window
+	end tell
+end skim_reload
