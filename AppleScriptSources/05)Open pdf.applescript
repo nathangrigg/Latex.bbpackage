@@ -50,19 +50,15 @@ set AppleScript's text item delimiters to _delims
 if viewer is "Skim" then
 
 	try
-		do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
+		do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
 	on error
-		tell application viewer
-			activate
+		tell application "Skim"
 			open _pdf
 		end tell
 	end try
 else
 
-	tell application viewer
-		activate
-		open _pdf
-	end tell
+	do shell script "open -a " & quoted form of viewer & " " & quoted form of _pdf
 end if
 
 on term(str, terminator)
