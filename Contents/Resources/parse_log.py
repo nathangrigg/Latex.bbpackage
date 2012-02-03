@@ -437,7 +437,10 @@ def applescript_output(d,directory):
 
 
   if "line" in d:
-    out.append(d["line"])
+    if d["line"]:
+      out.append(d["line"])
+    else:
+      out.append("0")
   else:
     out.append("0")
 
