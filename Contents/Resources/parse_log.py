@@ -447,8 +447,6 @@ def applescript_output(d,directory):
   message = ""
   if "text" in d:
     message += d["text"]
-  if "code" in d:
-    message += ' Bad input: %s ' % d["code"]
   if "pkg" in d:
     message += " (Package %s) " % d["pkg"]
   if "page" in d:
