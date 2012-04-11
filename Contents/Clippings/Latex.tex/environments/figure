@@ -2,5 +2,5 @@
 	\caption{#INSERTION#}
 	\label{figure:#INSERTION#}
 	\centering
-	#INSERTION#
+	#SELECTIONORINSERTION#
 \end{figure}
