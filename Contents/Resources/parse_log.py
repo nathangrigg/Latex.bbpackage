@@ -440,9 +440,9 @@ def applescript_output(d,directory):
     if d["line"]:
       out.append(d["line"])
     else:
-      out.append("0")
+      out.append("1")
   else:
-    out.append("0")
+    out.append("1")
 
   message = ""
   if "text" in d:

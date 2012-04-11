@@ -130,7 +130,7 @@ on typeset()
 						try
 							set line_num to _line as integer
 						on error
-							set line_num to 0
+							set line_num to 1
 						end try
 
 						set err_list_item to {result_kind:_kind, result_line:line_num, message:_description, result_file:_file}
