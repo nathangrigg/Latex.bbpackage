@@ -60,6 +60,10 @@ By default, the script uses [Skim][1] and tries to find the place in the pdf
 that corresponds to your current cursor position in the Latex file. If you want
 to change the viewer, you can edit the first lines of the script.
 
+### Insert Latex Environment
+
+This prompts for an environment name and inserts the `begin` and `end` environment commands.
+
 ### Show log warnings and errors
 
 This searches through the log file for warnings and errors and displays them
@@ -71,6 +75,7 @@ the log file.
 This is a script by Ramón M. Figueroa-Centeno that invokes [ChkTeX][4] on your
 document and displays the results in a BBEdit results browser. You need to have
 ChkTeX installed for this to work. ChkTeX is included in the MacTeX package.
+
 
 ### Declare Math Operator
 
@@ -129,6 +134,11 @@ you are likely to forget their names or how to use them. (such as accents and
 matrices). Commands which lend themselves well to keyboard shortcuts (such as
 `inverse`, `mathbb`, and `display math`) are included as well. You are
 responsible for setting your own keyboard shortcuts using the clippings palette.
+
+# Stationery
+
+There are a few basic Latex templates. BBEdit requires Stationery to have the "Stationery bit" set. If you don't see any Stationery, run the script "Install Latex Stationery" to set these bits.
+
 
 # License
 
