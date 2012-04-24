@@ -10,20 +10,20 @@
 \makeatletter\@setplength{sigindent}{0.4\textwidth}\makeatother
 
 %:Return Address
-\setkomavar{fromname}{#SELSTART##NAME##SELEND#}
-\setkomavar{fromaddress}{#PLACEHOLDERSTART#From Address#PLACEHOLDEREND#}
-\setkomavar{fromemail}[]{#PLACEHOLDERSTART#From email#PLACEHOLDEREND#}
+\setkomavar{fromname}{<#From Name#>}
+\setkomavar{fromaddress}{<#From Address#>}
+\setkomavar{fromemail}[]{<#From email#>}
 
 %:Date and Subject
-\setkomavar{date}{#PLACEHOLDERSTART#Date#PLACEHOLDEREND#}
-\setkomavar{subject}{#PLACEHOLDERSTART#Subject#PLACEHOLDEREND#}
+\setkomavar{date}{<#Date#>}
+\setkomavar{subject}{<#Subject#>}
 
 %:Start of letter
 \begin{document}
-\begin{letter}{#PLACEHOLDERSTART#To Address#PLACEHOLDEREND#}
-\opening{#PLACEHOLDERSTART#Opening#PLACEHOLDEREND#,}
+\begin{letter}{<#To Address#>}
+\opening{<#Opening#>,}
 
-#PLACEHOLDERSTART#Text of letter#PLACEHOLDEREND#
+<#Text of letter#>
 
 
 \closing{Sincerely,}
