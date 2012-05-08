@@ -1,17 +1,30 @@
 #!/usr/bin/python
+"""
+Search the top of a file for !TEX directives
+
+Usage:   directives.py command1 [command2 [...]] filename
+
+Example: directives.py root program foo.tex
+
+Results are printed, one per line, in the order the arguments are listed.
+"""
 
 import re
 import sys
 
-def search(s,head):
+def search(directive, head):
+    """
+    Search for a directive, e.g. "% !TEX root = filename"
+    """
     try:
-        m = re.search(r"%\s?!\s?TEX (TS-)?" + s + r"\s?=\s?([^\s]*)",head)
+        m = re.search(r"%\s?!\s?TEX (TS-)?" + directive +
+          r"\s?=\s?([^\s]*)", head)
         if m:
             return m.group(2)
         else:
             return ""
-    except:
-        sys.stderr.write("Invalid regular expression")
+    except re.error as message:
+        sys.stderr.write("Invalid regular expression: %s" % message)
         sys.exit(1)
 
 
@@ -28,7 +41,7 @@ for c in commands:
     d[c] = search(c, head)
 
 if "root" in commands:
-    if d["root"]=="":
+    if d["root"] == "":
         d["root"] = filename
     elif d["root"][0] != '/':
         d["root"] = filename[:filename.rfind('/')+1] + d["root"]

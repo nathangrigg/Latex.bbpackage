@@ -458,10 +458,10 @@ def applescript_output(d,directory):
 
 
 if __name__ == "__main__":
-    options,file=parse_options(sys.argv[1:])
-    directory = file[:file.rfind('/')+1]
-    check=LogCheck()
+    options,file = parse_options(sys.argv[1:])
+    directory = file[:file.rfind('/') + 1]
+    check = LogCheck()
     check.read(file)
-    for d in check.parse(errors=options["errors"],boxes=options["boxes"],
-      refs =options["refs"],warnings = options["warnings"]):
-        print applescript_output(d,directory)
+    for d in check.parse(errors=options["errors"], boxes=options["boxes"],
+      refs=options["refs"], warnings=options["warnings"]):
+        print applescript_output(d, directory)
