@@ -1,3 +1,5 @@
+-- by Nathan Grigg
+
 -- user configurable varaibles
 set viewer to "Skim"
 

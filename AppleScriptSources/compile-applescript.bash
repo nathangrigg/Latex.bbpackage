@@ -1,15 +1,9 @@
 #!/bin/bash
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd $( dirname "${BASH_SOURCE[0]}" )
 
-for f in *.applescript
+find . -name "*.applescript" -print0 | while read -d $'\0' file
 do
-	osacompile -o "../Contents/Scripts/${f%.applescript}.scpt" "$f"
+    osacompile -o "../Contents/${file%applescript}scpt" "$file"
 done
 
-cd "Tools"
-
-for f in *.applescript
-do
-	osacompile -o "../../Contents/Scripts/Tools/${f%.applescript}.scpt" "$f"
-done

@@ -1,3 +1,5 @@
+-- by Nathan Grigg
+
 property typeset_script_name : "00)Typeset Latex.scpt"
 
 -- get file information

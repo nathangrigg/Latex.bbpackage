@@ -1,3 +1,5 @@
+-- by Nathan Grigg
+
 -- User configurable varaibles
 property texbin : "/usr/texbin"
 property viewer : "Skim"

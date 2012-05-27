@@ -1,3 +1,4 @@
+-- by Nathan Grigg
 -- Get path to scripts
 try
 	set _path to term(POSIX path of (path to me), "/Contents/")

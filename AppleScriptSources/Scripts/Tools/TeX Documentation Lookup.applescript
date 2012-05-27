@@ -1,3 +1,5 @@
+-- by Nathan Grigg
+
 set texbin to "/usr/texbin"
 
 try
