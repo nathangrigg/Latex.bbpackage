@@ -1,5 +1,7 @@
 -- by Nathan Grigg
 
+property delay_time : 0.4
+
 tell application "BBEdit"
 
 	set _doc to text document 1
@@ -70,22 +72,19 @@ tell application "BBEdit"
 
 	select characters begin_loc through end_loc of _doc
 
-end tell
+	delay delay_time
 
-try
-	display dialog "Change " & _env & " environment to:" default answer _env with title "Change environment"
-on error
-	select insertion point before character _cursor of _doc
-	return
-end try
+	if last character of _env is "*" then
+		set new_env to text 1 through -2 of _env
+		set _diff to -1
+	else
+		set new_env to _env & "*"
+		set _diff to 1
+	end if
 
-tell application "BBEdit"
-	set new_env to text returned of result
-	set _diff to (length of new_env) - (length of _env)
 	set characters (begin_loc + 7) through (begin_loc + 6 + (length of _env)) of _doc to new_env
 	set characters (end_loc - (length of _env) + _diff) through (end_loc - 1 + _diff) of _doc to new_env
 
-	-- move cursor to account for inserted characters
 	select insertion point before character (_cursor + _diff) of _doc
 end tell
 
