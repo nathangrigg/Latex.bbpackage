@@ -152,7 +152,12 @@ on typeset()
 
 			if button returned of _dialog is "Go to Error" then
 				set _doc to open result_file of _err
-				tell _doc to select line (result_line of _err)
+				if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
+					find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
+					if not found of result then tell _doc to select line (result_line of _err)
+				else
+					tell _doc to select line (result_line of _err)
+				end if
 				return
 
 			else
