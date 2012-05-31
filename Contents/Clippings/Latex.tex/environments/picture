@@ -3,3 +3,4 @@
 	\put(0,5){\circle*{0.5}}
 	\put(1,5){\line(-1,-1){1}}
 \end{picture}
+#INDENT#

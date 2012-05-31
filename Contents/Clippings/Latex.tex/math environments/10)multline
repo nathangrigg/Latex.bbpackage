@@ -1,3 +1,4 @@
 \begin{multline}
 	#SELECTIONORPLACEHOLDER unaligned multiline equation#
 \end{multline}
+#INDENT#
