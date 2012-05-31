@@ -82,13 +82,12 @@ on typeset()
 			do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & "'" & gitinfo & " \\input{\"" & _basename & "\"}'"
 		end if
 	on error errMsg
-
+		-- if latex returns a nonzero status, check the log for errors
 		set AppleScript's text item delimiters to "."
 		set _logfile to ((text items 1 thru -2 of _filename) as string) & ".log" as string
 		set AppleScript's text item delimiters to _delims
 
 		-- time to run the log parsing script
-
 		try
 			set _result to do shell script quoted form of (_resources & "parse_log.py") & " " & (quoted form of _logfile)
 		on error
@@ -132,7 +131,7 @@ on typeset()
 						try
 							set line_num to _line as integer
 						on error
-							set line_num to 1
+							set line_num to 0
 						end try
 
 						set err_list_item to {result_kind:_kind, result_line:line_num, message:_description, result_file:_file}
@@ -144,22 +143,34 @@ on typeset()
 
 			set _err to item 1 of err_list
 
+			-- Errors that aren't line-based have a line number 0
+			-- We don't want to move the cursor unless the there is a
+			-- positive line
+			if (result_line of _err) > 0 then
+				set button_text to "Go to Error"
+			else
+				set button_text to "OK"
+			end if
+
 			try
-				set _dialog to display dialog "Error: " & message of _err buttons {"Go to Error", "See all errors", "Cancel"} default button 1 with title "Error in typesetting"
+				set _dialog to display dialog "Error: " & message of _err buttons {"See all errors", "Cancel", button_text} default button 3 with title "Error in typesetting"
 			on error
 				return
 			end try
 
 			if button returned of _dialog is "Go to Error" then
 				set _doc to open result_file of _err
+				-- special handling of undefined control sequence
 				if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
 					find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
-					if not found of result then tell _doc to select line (result_line of _err)
+					if not found of result then select line (result_line of _err)
 				else
 					tell _doc to select line (result_line of _err)
 				end if
 				return
 
+			else if button returned of _dialog is "OK" then
+				return
 			else
 				make new results browser with data err_list with properties {name:"Log Warnings and Errors"}
 				return

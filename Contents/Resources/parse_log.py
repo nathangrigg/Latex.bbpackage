@@ -426,6 +426,7 @@ def applescript_output(d,directory):
 
     if "file" in d:
         file = d["file"]
+        # convert relative path to absolute path
         if file[0] == "/":
             out.append(file)
         else:
@@ -436,13 +437,10 @@ def applescript_output(d,directory):
         out.append("")
 
 
-    if "line" in d:
-        if d["line"]:
-            out.append(d["line"])
-        else:
-            out.append("1")
+    if "line" in d and d["line"]:
+        out.append(d["line"])
     else:
-        out.append("1")
+        out.append("0")
 
     message = ""
     if "text" in d:
