@@ -163,7 +163,7 @@ on typeset()
 				-- special handling of undefined control sequence
 				if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
 					find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
-					if not found of result then select line (result_line of _err)
+					if not found of result then tell _doc to select line (result_line of _err)
 				else
 					tell _doc to select line (result_line of _err)
 				end if
@@ -189,10 +189,17 @@ on typeset()
 	set AppleScript's text item delimiters to _delims
 
 	if viewer is "Skim" then
-		if synctex then
+		try
+			-- check that Skim exists and get its path
+			tell application "Finder" to set skim_path to POSIX path of (application file id "SKim" as alias)
+		on error
+			do shell script "open -g -a Preview " & quoted form of _pdf
+			return
+		end try
 
+		if synctex then
 			try
-				do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
+				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
 			on error
 				skim_reload(_pdf)
 			end try
@@ -200,7 +207,7 @@ on typeset()
 			skim_reload(_pdf)
 		end if
 	else
-		do shell script "open -a " & quoted form of viewer & " " & quoted form of _pdf
+		do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
 	end if
 end typeset
 
@@ -211,9 +218,7 @@ on term(str, terminator)
 	return text 1 thru (_l + _n - 1) of str
 end term
 
-on skim_reload(_filename)
-	tell application "Skim"
-		set _window to open _filename
-		revert _window
-	end tell
+on skim_reload(_pdf)
+	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
+	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
 end skim_reload

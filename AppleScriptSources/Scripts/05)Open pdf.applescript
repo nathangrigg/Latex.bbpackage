@@ -50,17 +50,23 @@ set AppleScript's text item delimiters to _delims
 
 --if using skim, you can do forward search
 if viewer is "Skim" then
+	try
+		-- check that Skim exists and get its path
+		tell application "Finder" to set skim_path to POSIX path of (application file id "SKim" as alias)
+	on error
+		do shell script "open -g -a Preview " & quoted form of _pdf
+		return
+	end try
 
 	try
-		do shell script "/Applications/Skim.app/Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
+		do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
 	on error
-		tell application "Skim"
-			open _pdf
-		end tell
+		-- this monstrosity allows the rest of the script to work even if Skim is not installed.
+		do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
+
 	end try
 else
-
-	do shell script "open -a " & quoted form of viewer & " " & quoted form of _pdf
+	do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
 end if
 
 on term(str, terminator)
@@ -69,4 +75,3 @@ on term(str, terminator)
 	if _n is 0 then error "Not found in string"
 	return text 1 thru (_l + _n - 1) of str
 end term
-
