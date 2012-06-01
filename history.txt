@@ -1,3 +1,12 @@
+Current version: 1.2
+
+1.2
+    Change "Insert Environment" script to "begin...end" clipping
+    Change "Insert KOMAoptions" script to clipping
+    New clipping: End environment
+    New scripts: "Change environment" and "Star/unstar environment"
+    Better PDF preview and Latex error reporting
+
 1.1
 	Bug fixes and interface cleanup in Typeset and Doc Lookup scripts
 	New script "Insert Latex Environment"
@@ -5,12 +14,12 @@
 	Move template clippings to Stationery folder
 
 1.0
-	* New script "Typeset Latex" removes the need for TeXShop
-	* New script "Open pdf" integrates with Skim and synctex
-	* Ability to use any pdf viewer
-	* New script "Show log warnings and errors" gives errors in a nice format
-	* Several new clippings
-	* Fixed some typos in clippings
+	New script "Typeset Latex" removes the need for TeXShop
+	New script "Open pdf" integrates with Skim and synctex
+	Ability to use any pdf viewer
+	New script "Show log warnings and errors" gives errors in a nice format
+	Several new clippings
+	Fixed some typos in clippings
 
 0.1
-	* First version
+	First version
