@@ -4,7 +4,7 @@ on run
 	try
 		set dialogResult to display dialog "Which environment?" default answer "" with title "New Latex environment" buttons {"Cancel", "Insert"} default button "Insert" cancel button "Cancel"
 	on error
-		return
+		return ""
 	end try
 
 	set environmentName to text returned of dialogResult
