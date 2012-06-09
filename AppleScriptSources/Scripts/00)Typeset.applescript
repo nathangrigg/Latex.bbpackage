@@ -45,7 +45,10 @@ on typeset()
 		end if
 
 		--get the filename of the document
-		set _filename to POSIX path of (file of _doc as string)
+		set _file to file of _doc
+		if _file is missing value then error "Cannot access filename of document. Perhaps it is in a zip file."
+		set _filename to POSIX path of (_file as alias)
+
 	end tell
 
 	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
