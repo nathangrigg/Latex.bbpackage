@@ -18,6 +18,9 @@ tell application "BBEdit"
 		set begin_loc to _cursor
 	end try
 
+	set num_chars to length of text of _doc
+	if begin_loc > num_chars then set begin_loc to num_chars
+
 	(*
 	  begin_loc tracks the first begin, which progress toward the beginning
 	     of the document as the outer loop progresses.
