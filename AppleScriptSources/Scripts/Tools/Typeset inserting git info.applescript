@@ -1,6 +1,6 @@
 -- by Nathan Grigg
 
-property typeset_script_name : "00)Typeset Latex.scpt"
+property typeset_script_name : "00)Typeset.scpt"
 
 -- get file information
 tell application "BBEdit"
