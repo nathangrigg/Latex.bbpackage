@@ -1,0 +1,86 @@
+#! /bin/bash
+
+function error_exit
+{
+	echo "$1" 1>&2
+	exit 1
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Build script for Latex.bbpackage"
+    echo
+    echo "Usage: $0"
+    exit
+fi
+
+# go to directory containing this script
+cd $( dirname "${BASH_SOURCE[0]}" )
+
+
+# Check for tex location
+# ----------------------
+echo -n "Locating tex binaries..."
+if texbin=$( which pdflatex ); then
+    texbin=${texbin%pdflatex}
+    echo $texbin
+else
+    texbin="/usr/texbin/"
+    echo "Not found"
+    echo "Warning: pdflatex directory not found; assuming $texbin"
+fi
+
+if [ $texbin != "/usr/texbin/" ]; then
+    echo -n "Editing AppleScript to use custom tex path..."
+    # sed -i '' 's!/usr/texbn/!'"${texbin}"'!g' FILENAME
+    # echo "Done"
+    echo "NOT YET FUNCTIONAL"
+fi
+
+# Compile AppleScript sources
+# ---------------------------
+cd AppleScriptSources || error_exit "Error: Unable to find AppleScriptSources directory"
+
+# create directories if necessary
+find . -type d | while read directory
+do
+    [ -d "../Contents/$directory" ] || mkdir "../Contents/$directory"
+done
+
+echo -n "Compiling AppleScripts"
+find . -name "*.applescript" | while read file
+do
+    if osacompile -o "../Contents/${file%applescript}scpt" "$file"; then
+       echo -n "."
+    else
+       echo "Error: unable to compile $file"
+    fi
+done
+echo "Done"
+# return to parent directory
+cd ..
+
+# Set stationery bit on stationery
+# --------------------------------
+
+cd Contents/Stationery
+echo -n "Setting stationery bits"
+for f in *
+do
+    # if the file has no xattr's, then add some
+    # this is necessary for the applescript to work
+    xattr "$f" | grep -q 'com\.apple\.FinderInfo' \
+    || xattr -wx com.apple.FinderInfo \
+"54 45 58 54 00 00 00 00 08 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00" "$f"
+
+    # use applescript
+    if osascript -e "tell application \"Finder\" to set stationery of (POSIX file \"$f\" as alias) to true" > /dev/null; then
+        echo -n "."
+    else
+        echo "Error: unable to set stationery bit on $f"
+    fi
+done
+echo "Done"
+# return to parent directory
+cd ../..
+
