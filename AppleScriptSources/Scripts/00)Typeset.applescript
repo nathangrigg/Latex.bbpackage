@@ -1,9 +1,13 @@
+-- by Nathan Grigg
+
 on main()
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
-	tell typeset_lib to typeset()
+	tell typeset_lib to typeset without synctex and gitinfo
 end main
 
+
+-- Catch and display custom errors; exit silently on cancelled dialogs
 try
 	main()
 on error eStr number eNum partial result rList from badObj to exptectedType

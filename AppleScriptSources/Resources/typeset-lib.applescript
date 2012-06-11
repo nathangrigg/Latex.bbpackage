@@ -2,88 +2,54 @@
 
 -- User configurable varaibles
 property texbin : "/usr/texbin"
+property gitbin : "/usr/local/bin"
 property viewer : "Skim"
-property synctex : false
 
--- Don't change this
-property gitinfo : ""
-
--- Do the typsetting
-typeset()
-
--- Function typset()
-
-on typeset()
+on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	-- save text item delimiters
+	global _delims, _resources
 	set _delims to AppleScript's text item delimiters
-
-	-- Get path to scripts
-	try
-		set _path to term(POSIX path of (path to me), "/Contents/")
-	on error
-		display dialog "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." buttons {"Quit"} default button "Quit"
-		return
-	end try
-
-	set _resources to _path & "Resources/"
+	set _resources to path_to_contents() & "Resources/"
 
 	tell application "BBEdit"
 		-- Get document info and save
 		try
 			set _doc to document 1
-		on error
-			display dialog "I cannot find an open BBEdit document" buttons {"Quit"} default button "Quit"
-			return
+		on error number -1728
+			error "There is no open BBEdit document" number 5033
 		end try
+
 		set _tex_position to startLine of selection
 		save _doc
 		if source language of _doc is not "TeX" then
 			set _dialog to display dialog "You are attempting to typeset a non-tex file." buttons {"Quit", "Continue"} default button "Quit"
-			if button returned of _dialog is "Quit" then
-				return
-			end if
+			if button returned of _dialog is "Quit" then return
 		end if
 
 		--get the filename of the document
 		set _file to file of _doc
-		if _file is missing value then error "Cannot access filename of document. Perhaps it is in a zip file."
+		if _file is missing value then error "Cannot access filename of document. It may be on a remote machine or in a zip file." number 5033
 		set _filename to POSIX path of (_file as alias)
-
 	end tell
 
-	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
-	try
-		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
-	on error errMsg
-		display dialog "Error extracting directives from file (python script directives.py)" & return & return & errMsg
-		return
-	end try
+	set {_filename, _tex_program} to extract_directives out of _filename
 
-	-- grab the root document name and gret  folder and basename
-	set _line to paragraph 1 of _result
-	set _filename to _line
-
+	-- split folder from basename
 	set AppleScript's text item delimiters to "/"
 	set _folder to "/" & (text items 1 thru -2 of _filename as string)
 	set _basename to last text item of _filename
 	set AppleScript's text item delimiters to _delims
 
-	-- grab the latex engine
-	set _line to paragraph 2 of _result
-	if _line is "" then
-		set _tex_program to "pdflatex"
+	-- get git info if requested
+	if gitinfoBool then
+		set script_suffix to "'" & (git_log for _folder) & " \\input{\"" & _basename & "\"}'"
 	else
-		set _tex_program to _line
+		set script_suffix to quoted form of _basename
 	end if
 
+	-- run the pdflatex script
 	try
-		-- this is the standard typeset
-		if gitinfo is "" then
-			do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & quoted form of _basename
-		else
-			-- this is typeset adding git info
-			do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & "'" & gitinfo & " \\input{\"" & _basename & "\"}'"
-		end if
+		do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & script_suffix
 	on error errMsg
 		-- if latex returns a nonzero status, check the log for errors
 		set AppleScript's text item delimiters to "."
@@ -99,8 +65,7 @@ on typeset()
 		end try
 
 		if _result is "" then
-			display dialog "Latex command returned an error, but no errors are found in the log." & return & return & errMsg buttons {"Quit"} default button "Quit"
-			return
+			error "Latex command returned an error, but no errors are found in the log.\r\r" & errMsg number 5033
 		end if
 
 		tell application "BBEdit"
@@ -200,7 +165,7 @@ on typeset()
 			return
 		end try
 
-		if synctex then
+		if synctexBool then
 			try
 				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
 			on error
@@ -214,14 +179,51 @@ on typeset()
 	end if
 end typeset
 
-on term(str, terminator)
-	set _l to length of terminator
-	set _n to (offset of terminator in str)
-	if _n is 0 then error "Not found in string"
-	return text 1 thru (_l + _n - 1) of str
-end term
+
+on git_log for _folder
+	-- get revision information from git
+	try
+		set _info to do shell script "PATH=$PATH:" & quoted form of gitbin & "; cd " & quoted form of _folder & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
+	on error number 128
+		error "Cannot find git revision information. Check that the file is inside a repository." number 5033
+	end try
+	return _info
+end git_log
+
+on extract_directives out of _filename
+	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
+	global _resources
+	try
+		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
+	on error errMsg
+		error "Error extracting directives from file (python script directives.py)\r\r" & errMsg number 5033
+	end try
+
+	-- grab the root document name
+	set _filename to paragraph 1 of _result
+
+	-- grab the latex engine
+	set _line to paragraph 2 of _result
+	if _line is "" then
+		set _tex_program to "pdflatex"
+	else
+		set _tex_program to _line
+	end if
+	return {_filename, _tex_program}
+end extract_directives
 
 on skim_reload(_pdf)
 	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
 	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
 end skim_reload
+
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents

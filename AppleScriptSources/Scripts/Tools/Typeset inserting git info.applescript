@@ -1,35 +1,26 @@
--- by Nathan Grigg
+(* by Nathan Grigg
+
+To use "Typeset inserting git info" script:
+
+1. In your preamble, insert \providecommand{\RevisionInfo}{}
+2. In the text, insert \RevisionInfo
+
+The result:
+
+- When you run normal latex, there will be no revision info
+- When you run this script, \RevisionInfo will be replaced with the info
+*)
+
 -- get file information
 property git_path : "/usr/local/bin/"
 
 on main()
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
-
-	-- get folder containing tex file
-	tell application "BBEdit"
-		try
-			set _doc to front document
-			set _filename to file of _doc
-			set _delims to AppleScript's text item delimiters
-			set AppleScript's text item delimiters to "/"
-			set _path to (text items 1 thru -2 of POSIX path of _filename) as string
-			set AppleScript's text item delimiters to _delims
-		on error
-			error "I cannot find an open BBEdit document" number 5033
-		end try
-	end tell
-
-	-- get revision information from git
-	try
-		set _info to do shell script "PATH=$PATH:" & quoted form of git_path & "; cd " & quoted form of _path & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
-	on error number 128
-		error "Cannot find git revision information. Check that the file is inside a repository." number 5033
-	end try
-	set typeset_lib's gitinfo to _info
-	tell typeset_lib to typeset()
+	tell typeset_lib to typeset with gitinfo without synctex
 end main
 
+-- Catch and display custom errors; exit silently on cancelled dialogs
 try
 	main()
 on error eStr number eNum partial result rList from badObj to exptectedType
