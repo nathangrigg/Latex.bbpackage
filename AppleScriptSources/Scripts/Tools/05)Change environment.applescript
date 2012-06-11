@@ -68,7 +68,7 @@ tell application "BBEdit"
 
 		set end_loc to end_loc + (length of found object of match_end) - 1
 
-		if end_loc ≥ _cursor and _cursor ≥ begin_loc then exit repeat
+            if end_loc is greater than or equal to _cursor and _cursor is greater than or equal to begin_loc then exit repeat
 	end repeat
 
 	select characters begin_loc through end_loc of _doc
