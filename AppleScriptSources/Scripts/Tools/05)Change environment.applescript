@@ -1,6 +1,5 @@
 -- by Nathan Grigg
 
-
 on main()
 	set env_lib_file to path_to_contents() & "Resources/environments-lib.scpt"
 	set env_lib to load script POSIX file env_lib_file
@@ -16,14 +15,8 @@ on main()
 	end try
 
 	set new_env to text returned of result
-	set _diff to (length of new_env) - (length of env_name)
-	tell application "BBEdit"
-		set characters (begin_loc + 7) through (begin_loc + 6 + (length of env_name)) of doc to new_env
-		set characters (end_loc - (length of env_name) + _diff) through (end_loc - 1 + _diff) of doc to new_env
 
-		-- move cursor to account for inserted characters
-		select insertion point before character (cursor_loc + _diff) of doc
-	end tell
+	tell env_lib to change_environment(begin_loc, end_loc, doc, cursor_loc, new_env, env_name)
 end main
 
 -- Catch and display custom errors; exit silently on cancelled dialogs

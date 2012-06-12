@@ -12,18 +12,11 @@ on main()
 
 	if last character of env_name is "*" then
 		set new_env to text 1 through -2 of env_name
-		set _diff to -1
 	else
 		set new_env to env_name & "*"
-		set _diff to 1
 	end if
 
-	tell application "BBEdit"
-		set characters (begin_loc + 7) through (begin_loc + 6 + (length of env_name)) of doc to new_env
-		set characters (end_loc - (length of env_name) + _diff) through (end_loc - 1 + _diff) of doc to new_env
-
-		select insertion point before character (cursor_loc + _diff) of doc
-	end tell
+	tell env_lib to change_environment(begin_loc, end_loc, doc, cursor_loc, new_env, env_name)
 end main
 
 -- Catch and display custom errors; exit silently on cancelled dialogs

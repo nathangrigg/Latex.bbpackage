@@ -89,6 +89,21 @@ on balance_environment given ending:endBool
 	end if
 end balance_environment
 
+
+on change_environment(begin_loc, end_loc, doc, cursor_loc, new_env, old_env)
+	set _diff to (length of new_env) - (length of old_env)
+	tell application "BBEdit"
+		set characters (begin_loc + 7) through (begin_loc + 6 + (length of old_env)) of doc to new_env
+		set characters (end_loc - (length of old_env) + _diff) through (end_loc - 1 + _diff) of doc to new_env
+
+		-- move cursor to account for inserted characters
+		select insertion point before character (cursor_loc + _diff) of doc
+	end tell
+end change_environment
+
+
+
+
 ------ Get information from BBEdit ------
 on get_front_BBEdit_doc()
 	-- get front document, with error if there is none
