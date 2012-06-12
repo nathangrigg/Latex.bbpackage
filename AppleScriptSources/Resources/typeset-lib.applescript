@@ -15,28 +15,18 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 
 	set _delims to AppleScript's text item delimiters
 	set _resources to path_to_contents() & "Resources/"
+	set _doc to get_front_BBEdit_doc()
 
 	tell application "BBEdit"
-		-- Get document info and save
-		try
-			set _doc to document 1
-		on error number -1728
-			error "There is no open BBEdit document" number 5033
-		end try
-
 		set _tex_position to startLine of selection
 		save _doc
 		if source language of _doc is not "TeX" then
 			set _dialog to display dialog "You are attempting to typeset a non-tex file." buttons {"Quit", "Continue"} default button "Quit"
 			if button returned of _dialog is "Quit" then return
 		end if
-
-		--get the filename of the document
-		set _file to file of _doc
-		if _file is missing value then error "Cannot access filename of document. It may be on a remote machine or in a zip file." number 5033
-		set _filename to POSIX path of (_file as alias)
 	end tell
 
+	set _filename to get_filename for _doc
 	set {_root, _tex_program} to extract_directives out of _filename
 
 	-- split folder from basename
@@ -250,6 +240,24 @@ on skim_reload(_pdf)
 	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
 	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
 end skim_reload
+
+------ Get information from BBEdit ------
+on get_front_BBEdit_doc()
+	-- get front document, with error if there is none
+	try
+		tell application "BBEdit" to set doc to document 1
+	on error number -1728
+		error "There is no open BBEdit document" number 5033
+	end try
+	return doc
+end get_front_BBEdit_doc
+
+on get_filename for doc
+	-- get filename from BBEdit document object, with error on missing value
+	tell application "BBEdit" to set doc_file to file of doc
+	if doc_file is missing value then error "Cannot access filename of document.\r\rCheck that it is saved on your local machine and not inside a zip file." number 5033
+	return POSIX path of (doc_file as alias)
+end get_filename
 
 ------ String manipulation subroutines ------
 

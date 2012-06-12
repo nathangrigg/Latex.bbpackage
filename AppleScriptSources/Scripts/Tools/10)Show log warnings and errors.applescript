@@ -4,21 +4,11 @@
 on main()
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
-	tell application "BBEdit"
-		try
-			set _doc to document 1
-		on error number -1728
-			error "There is no open BBEdit document" number 5033
-		end try
-		set _file to file of _doc
-		if _file is missing value then error "Cannot access filename of document. It may be on a remote machine or in a zip file." number 5033
-		set _filename to POSIX path of (_file as alias)
-	end tell
-
 	tell typeset_lib
+		set _doc to get_front_BBEdit_doc()
+		set _filename to get_filename for _doc
 		set err_list to parse_errors from _filename with warnings
 	end tell
-
 
 	if length of err_list is 0 then
 		display dialog "There are no errors or warnings"
