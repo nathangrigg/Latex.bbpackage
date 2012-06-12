@@ -1,77 +1,50 @@
 -- by Nathan Grigg
 
--- user configurable varaibles
-set viewer to "Skim"
 
--- save text item delimiters
-set _delims to AppleScript's text item delimiters
+on main()
+	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
+	set typeset_lib to load script POSIX file typeset_lib_file
 
-tell application "BBEdit"
-	-- Get document info and save
-	try
-		set _file to (file of document 1)
-		set _filename to POSIX path of _file
+	tell application "BBEdit"
+		try
+			set _doc to document 1
+		on error number -1728
+			error "There is no open BBEdit document" number 5033
+		end try
+		set _file to file of _doc
+		if _file is missing value then error "Cannot access filename of document. It may be on a remote machine or in a zip file." number 5033
+		set _filename to POSIX path of (_file as alias)
 		set _tex_position to startLine of selection
-	on error
-		display dialog "I cannot get the filename of any document."
-		return
-	end try
+	end tell
 
-end tell
+	tell typeset_lib
+		set {_root, _tex} to extract_directives out of _filename
+		view_pdf of _root with synctex given tex_program:_tex, synctex_line:_tex_position, synctex_file: _filename
+	end tell
+end main
 
+
+-- Catch and display custom errors; exit silently on cancelled dialogs
 try
-	set _path to term(POSIX path of (path to me), "/Contents/")
-on error
-	display dialog "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." buttons {"Quit"} default button "Quit"
-	return
+	main()
+on error eStr number eNum partial result rList from badObj to exptectedType
+	if eNum = 5033 then
+		display dialog eStr buttons {"OK"} with title "Error" default button 1
+	else if eNum = 5088 then
+		beep
+	else if eNum is not -128 then
+		error eStr number eNum partial result rList from badObj to exptectedType
+	end if
 end try
 
-set _script to _path & "Resources/directives.py"
-try
-	set _result to do shell script quoted form of _script & " root program " & quoted form of _filename
-	set _root to paragraph 1 of _result
-	set _tex_program to paragraph 2 of _result
-on error
-	set _root to _filename
-	set _tex_program to "pdflatex"
-end try
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents
 
-if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains _tex_program then
-	set _extension to ".dvi"
-else
-	set _extension to ".pdf"
-end if
-
-set AppleScript's text item delimiters to "."
-set _pdf to ((text items 1 thru -2 of _root) as string) & _extension as string
-set AppleScript's text item delimiters to _delims
-
---open in viewer
-
---if using skim, you can do forward search
-if viewer is "Skim" then
-	try
-		-- check that Skim exists and get its path
-		tell application "Finder" to set skim_path to POSIX path of (application file id "SKim" as alias)
-	on error
-		do shell script "open -g -a Preview " & quoted form of _pdf
-		return
-	end try
-
-	try
-		do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
-	on error
-		-- this monstrosity allows the rest of the script to work even if Skim is not installed.
-		do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
-
-	end try
-else
-	do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
-end if
-
-on term(str, terminator)
-	set _l to length of terminator
-	set _n to (offset of terminator in str)
-	if _n is 0 then error "Not found in string"
-	return text 1 thru (_l + _n - 1) of str
-end term

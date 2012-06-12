@@ -31,12 +31,12 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 		set _filename to POSIX path of (_file as alias)
 	end tell
 
-	set {_filename, _tex_program} to extract_directives out of _filename
+	set {_root, _tex_program} to extract_directives out of _filename
 
 	-- split folder from basename
 	set AppleScript's text item delimiters to "/"
-	set _folder to "/" & (text items 1 thru -2 of _filename as string)
-	set _basename to last text item of _filename
+	set _folder to "/" & (text items 1 thru -2 of _root as string)
+	set _basename to last text item of _root
 	set AppleScript's text item delimiters to _delims
 
 	-- get git info if requested
@@ -50,19 +50,24 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	try
 		do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & script_suffix
 	on error errMsg
-		handle_latex_error from _filename given errMessage:errMsg
+		handle_latex_error from _root given errMessage:errMsg
 		return false
 	end try
 
-	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains _tex_program then
-		set _extension to ".dvi"
+	view_pdf of _root given synctex:synctexBool, tex_program:_tex_program, synctex_line: _tex_position, synctex_file:_filename
+
+end typeset
+
+
+on view_pdf of _filename given synctex:synctexBool, tex_program:tex, synctex_line:s_line, synctex_file:s_file
+	-- view pdf in Skim or preview
+	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains tex then
+		set _extension to "dvi"
 	else
-		set _extension to ".pdf"
+		set _extension to "pdf"
 	end if
 
-	set AppleScript's text item delimiters to "."
-	set _pdf to ((text items 1 thru -2 of _filename) as string) & _extension as string
-	set AppleScript's text item delimiters to _delims
+	set _pdf to change_extension of _filename into _extension
 
 	if viewer is "Skim" then
 		try
@@ -75,7 +80,7 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 
 		if synctexBool then
 			try
-				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & _tex_position & " " & quoted form of _pdf & " " & quoted form of _filename
+				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & s_line & " " & quoted form of _pdf & " " & quoted form of s_file
 			on error
 				skim_reload(_pdf)
 			end try
@@ -85,7 +90,7 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	else
 		do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
 	end if
-end typeset
+end view_pdf
 
 on parse_errors from _filename given warnings:warningsBool
 	set _resources to path_to_contents() & "Resources/"
