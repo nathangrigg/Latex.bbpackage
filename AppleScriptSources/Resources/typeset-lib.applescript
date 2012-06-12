@@ -7,7 +7,6 @@ property viewer : "Skim"
 
 on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	-- save text item delimiters
-	global _delims, _resources
 	set _delims to AppleScript's text item delimiters
 	set _resources to path_to_contents() & "Resources/"
 
@@ -51,99 +50,8 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	try
 		do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of _folder & " ; " & _tex_program & " -interaction=batchmode -synctex=1 " & script_suffix
 	on error errMsg
-		-- if latex returns a nonzero status, check the log for errors
-		set AppleScript's text item delimiters to "."
-		set _logfile to ((text items 1 thru -2 of _filename) as string) & ".log" as string
-		set AppleScript's text item delimiters to _delims
-
-		-- time to run the log parsing script
-		try
-			set _result to do shell script quoted form of (_resources & "parse_log.py") & " " & (quoted form of _logfile)
-		on error
-			display dialog "Error parsing the log file. It may not exist (parse_log.py)"
-			return
-		end try
-
-		if _result is "" then
-			error "Latex command returned an error, but no errors are found in the log.\r\r" & errMsg number 5033
-		end if
-
-		tell application "BBEdit"
-			set err_list to {}
-			repeat with _err in (every paragraph of _result)
-				if (_err as text) is not equal to "" then
-					try
-						if (word 1 of _err) is "Error" then
-							set _kind to error_kind
-						else if (word 1 of _err) is "Warning" then
-							set _kind to warning_kind
-						else
-							set _kind to "Unknown"
-						end if
-					on error
-						set _kind to "Unknown"
-					end try
-
-					if _kind is not "Unknown" then
-						set AppleScript's text item delimiters to {tab}
-						set _filename to text item 2 of _err
-						try
-							set _file to POSIX file _filename as alias
-						on error
-							display dialog "The log referenced an unknown file."
-							return
-						end try
-						set _line to text item 3 of _err
-						set _description to text items 4 thru -1 of _err as text
-						set AppleScript's text item delimiters to _delims
-						try
-							set line_num to _line as integer
-						on error
-							set line_num to 0
-						end try
-
-						set err_list_item to {result_kind:_kind, result_line:line_num, message:_description, result_file:_file}
-						copy err_list_item to end of err_list
-
-					end if
-				end if
-			end repeat
-
-			set _err to item 1 of err_list
-
-			-- Errors that aren't line-based have a line number 0
-			-- We don't want to move the cursor unless the there is a
-			-- positive line
-			if (result_line of _err) > 0 then
-				set button_text to "Go to Error"
-			else
-				set button_text to "OK"
-			end if
-
-			try
-				set _dialog to display dialog "Error: " & message of _err buttons {"See all errors", "Cancel", button_text} default button 3 with title "Error in typesetting"
-			on error
-				return
-			end try
-
-			if button returned of _dialog is "Go to Error" then
-				set _doc to open result_file of _err
-				-- special handling of undefined control sequence
-				if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
-					find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
-					if not found of result then tell _doc to select line (result_line of _err)
-				else
-					tell _doc to select line (result_line of _err)
-				end if
-				return
-
-			else if button returned of _dialog is "OK" then
-				return
-			else
-				make new results browser with data err_list with properties {name:"Log Warnings and Errors"}
-				return
-			end if
-		end tell
+		handle_latex_error from _filename given errMessage:errMsg
+		return false
 	end try
 
 	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains _tex_program then
@@ -179,6 +87,106 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	end if
 end typeset
 
+on parse_errors from _filename given warnings:warningsBool
+	set _resources to path_to_contents() & "Resources/"
+	-- parse errors from logfile and create a results browser
+	set _logfile to change_extension of _filename into "log"
+
+	if warningsBool then
+		set _options to " --errors --warnings --refs --boxes "
+	else
+		set _options to " "
+	end if
+
+	try
+		set _result to do shell script quoted form of (_resources & "parse_log.py") & _options & (quoted form of _logfile)
+	on error
+		error "Error parsing the log file. It may not exist (parse_log.py)" number 5033
+	end try
+
+	set err_list to {}
+	repeat with _err in (every paragraph of _result)
+		if (_err as text) is not equal to "" then
+			try
+				tell application "BBEdit"
+					if (word 1 of _err) is "Error" then
+						set _kind to error_kind
+					else if (word 1 of _err) is "Warning" then
+						set _kind to warning_kind
+					else
+						set _kind to "Unknown"
+					end if
+				end tell
+			on error
+				set _kind to "Unknown"
+			end try
+
+			if _kind is not "Unknown" then
+				set _delims to AppleScript's text item delimiters
+				set AppleScript's text item delimiters to {tab}
+				set _filename to text item 2 of _err
+				try
+					set _file to POSIX file _filename as alias
+				on error
+					error "The log referenced an unknown file." number 5033
+				end try
+				set _line to text item 3 of _err
+				set _description to text items 4 thru -1 of _err as text
+				set AppleScript's text item delimiters to _delims
+				try
+					set line_num to _line as integer
+				on error
+					set line_num to 0
+				end try
+
+				tell application "BBEdit" to set err_list_item to {result_kind:_kind, result_line:line_num, message:_description, result_file:_file}
+				copy err_list_item to end of err_list
+			end if
+		end if
+	end repeat
+	return err_list
+end parse_errors
+
+on handle_latex_error from _filename given errMessage:errMsg
+	set err_list to parse_errors from _filename without warnings
+	if length of err_list is 0 then error "Latex command returned an error, but no errors are found in the log.\r\r" & errMsg number 5033
+
+	tell application "BBEdit"
+		set _err to item 1 of err_list
+		-- Errors that aren't line-based have a line number 0
+		-- We don't want to move the cursor unless the there is a
+		-- positive line
+		if (result_line of _err) > 0 then
+			set button_text to "Go to Error"
+		else
+			set button_text to "OK"
+		end if
+
+		set _dialog to display dialog "Error: " & message of _err buttons {"See all errors", "Cancel", button_text} default button 3 with title "Error in typesetting"
+
+		if button returned of _dialog is "Go to Error" then
+			set _doc to open result_file of _err
+			-- special handling of undefined control sequence
+			if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
+				find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
+				if not found of result then tell _doc to select line (result_line of _err)
+			else
+				tell _doc to select line (result_line of _err)
+			end if
+		else if button returned of _dialog is "See all errors" then
+			make new results browser with data err_list with properties {name:"Log Warnings and Errors"}
+		end if
+	end tell
+end handle_latex_error
+
+on change_extension of _filename into _ext
+	-- return filename with extension changed to ext
+	set _delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "."
+	set new_name to ((text items 1 thru -2 of _filename) & _ext) as string
+	set AppleScript's text item delimiters to _delims
+	return new_name
+end change_extension
 
 on git_log for _folder
 	-- get revision information from git
@@ -192,7 +200,7 @@ end git_log
 
 on extract_directives out of _filename
 	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
-	global _resources
+	set _resources to path_to_contents() & "Resources/"
 	try
 		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
 	on error errMsg
