@@ -1,12 +1,18 @@
 -- by Nathan Grigg
 
--- User configurable varaibles
+-- User configurable variables
 property texbin : "/usr/texbin"
 property gitbin : "/usr/local/bin"
 property viewer : "Skim"
 
+------ Main typeset script ------
+
 on typeset given synctex:synctexBool, gitinfo:gitinfoBool
-	-- save text item delimiters
+	(* typeset the front BBEdit document and display the pdf
+	   use "with synctex" to use forward search in Skim
+	   use "with gitinfo" to add latest git commit information
+	*)
+
 	set _delims to AppleScript's text item delimiters
 	set _resources to path_to_contents() & "Resources/"
 
@@ -54,45 +60,54 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 		return false
 	end try
 
-	view_pdf of _root given synctex:synctexBool, tex_program:_tex_program, synctex_line: _tex_position, synctex_file:_filename
+	view_pdf of _root given synctex:synctexBool, tex_program:_tex_program, synctex_line:_tex_position, synctex_file:_filename
 
 end typeset
 
+------ Extract directives ------
 
-on view_pdf of _filename given synctex:synctexBool, tex_program:tex, synctex_line:s_line, synctex_file:s_file
-	-- view pdf in Skim or preview
-	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains tex then
-		set _extension to "dvi"
+on extract_directives out of _filename
+	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
+	set _resources to path_to_contents() & "Resources/"
+	try
+		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
+	on error errMsg
+		error "Error extracting directives from file (python script directives.py)\r\r" & errMsg number 5033
+	end try
+
+	-- grab the root document name
+	set _filename to paragraph 1 of _result
+
+	-- grab the latex engine
+	set _line to paragraph 2 of _result
+	if _line is "" then
+		set _tex_program to "pdflatex"
 	else
-		set _extension to "pdf"
+		set _tex_program to _line
 	end if
+	return {_filename, _tex_program}
+end extract_directives
 
-	set _pdf to change_extension of _filename into _extension
 
-	if viewer is "Skim" then
-		try
-			-- check that Skim exists and get its path
-			tell application "Finder" to set skim_path to POSIX path of (application file id "SKim" as alias)
-		on error
-			do shell script "open -g -a Preview " & quoted form of _pdf
-			return
-		end try
+------ Git info ------
 
-		if synctexBool then
-			try
-				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & s_line & " " & quoted form of _pdf & " " & quoted form of s_file
-			on error
-				skim_reload(_pdf)
-			end try
-		else
-			skim_reload(_pdf)
-		end if
-	else
-		do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
-	end if
-end view_pdf
+on git_log for _folder
+	-- get revision information from git
+	try
+		set _info to do shell script "PATH=$PATH:" & quoted form of gitbin & "; cd " & quoted form of _folder & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
+	on error number 128
+		error "Cannot find git revision information. Check that the file is inside a repository." number 5033
+	end try
+	return _info
+end git_log
+
+------ Latex error handling ------
 
 on parse_errors from _filename given warnings:warningsBool
+	(* Parse errors from log associated to filename
+	   use "with warnings" to also parse warnings
+	   use "without warnings" to parse errors only
+	*)
 	set _resources to path_to_contents() & "Resources/"
 	-- parse errors from logfile and create a results browser
 	set _logfile to change_extension of _filename into "log"
@@ -153,6 +168,7 @@ on parse_errors from _filename given warnings:warningsBool
 end parse_errors
 
 on handle_latex_error from _filename given errMessage:errMsg
+	-- handle an error in the latex shell command
 	set err_list to parse_errors from _filename without warnings
 	if length of err_list is 0 then error "Latex command returned an error, but no errors are found in the log.\r\r" & errMsg number 5033
 
@@ -184,6 +200,59 @@ on handle_latex_error from _filename given errMessage:errMsg
 	end tell
 end handle_latex_error
 
+------ PDF subroutines ------
+
+on view_pdf of _filename given synctex:synctexBool, tex_program:tex, synctex_line:s_line, synctex_file:s_file
+	(* View pdf in Skim or some other viewer
+	   The extension of _filename doesn't matter; it is changed intelligently.
+  	   Use tex_program:"pdflatex" to specify the tex program
+	     (this is used to determine if the extension is pdf or dvi)
+	   Use "with synctex" to use forward search (for Skim only)
+	   Use "given synctex_line:10, synctex_file:blah.tex" to give
+	     additional synctex information.
+	   Set the viewer property to use a different viewer program.
+	   If Skim is not installed but the viewer is set to Skim, it
+	     uses Preview instead.
+	*)
+
+	if {"tex", "etex", "eplain", "latex", "dviluatex", "dvilualatex", "xmltex", "jadetex", "mtex", "utf8mex", "cslatex", "csplain", "aleph", "lamed"} contains tex then
+		set _extension to "dvi"
+	else
+		set _extension to "pdf"
+	end if
+
+	set _pdf to change_extension of _filename into _extension
+
+	if viewer is "Skim" then
+		try
+			-- check that Skim exists and get its path
+			tell application "Finder" to set skim_path to POSIX path of (application file id "SKim" as alias)
+		on error
+			do shell script "open -g -a Preview " & quoted form of _pdf
+			return
+		end try
+
+		if synctexBool then
+			try
+				do shell script quoted form of skim_path & "Contents/SharedSupport/displayline -r -b -g " & s_line & " " & quoted form of _pdf & " " & quoted form of s_file
+			on error
+				skim_reload(_pdf)
+			end try
+		else
+			skim_reload(_pdf)
+		end if
+	else
+		do shell script "open -g -a " & quoted form of viewer & " " & quoted form of _pdf
+	end if
+end view_pdf
+
+on skim_reload(_pdf)
+	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
+	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
+end skim_reload
+
+------ String manipulation subroutines ------
+
 on change_extension of _filename into _ext
 	-- return filename with extension changed to ext
 	set _delims to AppleScript's text item delimiters
@@ -192,43 +261,6 @@ on change_extension of _filename into _ext
 	set AppleScript's text item delimiters to _delims
 	return new_name
 end change_extension
-
-on git_log for _folder
-	-- get revision information from git
-	try
-		set _info to do shell script "PATH=$PATH:" & quoted form of gitbin & "; cd " & quoted form of _folder & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
-	on error number 128
-		error "Cannot find git revision information. Check that the file is inside a repository." number 5033
-	end try
-	return _info
-end git_log
-
-on extract_directives out of _filename
-	--look in beginning of file for directives (e.g. "% !TEX program=xelatex")
-	set _resources to path_to_contents() & "Resources/"
-	try
-		set _result to do shell script quoted form of (_resources & "directives.py") & " root program " & quoted form of _filename
-	on error errMsg
-		error "Error extracting directives from file (python script directives.py)\r\r" & errMsg number 5033
-	end try
-
-	-- grab the root document name
-	set _filename to paragraph 1 of _result
-
-	-- grab the latex engine
-	set _line to paragraph 2 of _result
-	if _line is "" then
-		set _tex_program to "pdflatex"
-	else
-		set _tex_program to _line
-	end if
-	return {_filename, _tex_program}
-end extract_directives
-
-on skim_reload(_pdf)
-	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
-	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set _window to open \"" & _pdf & "\"' -e 'revert _window' -e 'end tell'"
-end skim_reload
 
 on path_to_contents()
 	--- Returns path to "Contents" folder containing the current script
