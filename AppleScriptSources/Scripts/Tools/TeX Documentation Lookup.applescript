@@ -1,17 +1,38 @@
 -- by Nathan Grigg
 
-set texbin to "/usr/texbin"
+property package_name : ""
+
+on main()
+	-- get texbin from the typeset script
+	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
+	set typeset_lib to load script POSIX file typeset_lib_file
+	set texbin to typeset_lib's texbin
+	display dialog "Which package would you like documentation for?" default answer package_name
+	set package_name to text returned of result
+
+	set stdout to do shell script "PATH=$PATH:" & quoted form of texbin & " ; texdoc " & (quoted form of package_name)
+	if stdout is not "" then error stdout number 5033
+end main
 
 try
-	set _result to display dialog "Which package would you like documentation for?" default answer ""
-on error
-	return
+	main()
+on error eStr number eNum partial result rList from badObj to exptectedType
+	if eNum = 5033 then
+		display dialog eStr buttons {"OK"} with title "Error" default button 1
+	else if eNum = 5088 then
+		beep
+	else if eNum is not -128 then
+		error eStr number eNum partial result rList from badObj to exptectedType
+	end if
 end try
 
-set _package to text returned of _result
-set _message to do shell script "PATH=$PATH:" & quoted form of texbin & " ; texdoc " & (quoted form of _package)
-if _message is not "" then
-	try
-		display dialog _message with title "Error" buttons "OK" default button "OK" cancel button "OK"
-	end try
-end if
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents
