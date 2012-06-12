@@ -1,4 +1,3 @@
--- set this to the location of chktex
 property texbin: "/usr/texbin/"
 
 (*
@@ -15,34 +14,18 @@ This AppleScript is released under a Creative Commons Attribution-ShareAlike Lic
 Based on the CSS Syntax Check script for BBEdit by John Gruber:
 http://daringfireball.net/projects/csschecker/
 
+Minor edits by Nathan Grigg
 *)
 
 on run
-	-- The run handler is called when the script is invoked normally,
-	-- such as from BBEdit's Scripts menu.
+	-- these lines can be deleted
+	-- they just change the chktex path if necessary
+	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
+	set typeset_lib to load script POSIX file typeset_lib_file
+	set my texbin to typeset_lib's texbin
+	--- end deletable lines
 	my ChkteX()
 end run
-
-on menuselect()
-	-- The menuselect() handler gets called when the script is invoked
-	-- by BBEdit as a menu script. Save this script, or an alias to it,
-	-- as "Check•Document Syntax" in the "Menu Scripts" folder in your
-	-- "BBEdit Support" folder.
-	tell application "BBEdit"
-		-- returning true value stops action from continuing
-		-- false makes the menu action continue
-		try
-			if (source language of window 1 is "TeX") then
-				-- It's a TeX file, so tell BBEdit *not* to
-				-- continue with its HTML syntax check:
-				my ChkteX()
-				return true
-			else
-				return false
-			end if
-		end try
-	end tell
-end menuselect
 
 on ChkteX()
 	tell application "BBEdit"
@@ -183,3 +166,14 @@ on ChkteX()
 	end tell
 
 end ChkteX
+
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents
