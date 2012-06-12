@@ -11,9 +11,6 @@ The result:
 - When you run this script, \RevisionInfo will be replaced with the info
 *)
 
--- get file information
-property git_path : "/usr/local/bin/"
-
 on main()
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
