@@ -22,7 +22,7 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 		save _doc
 		if source language of _doc is not "TeX" then
 			set _dialog to display dialog "You are attempting to typeset a non-tex file." buttons {"Quit", "Continue"} default button "Quit"
-			if button returned of _dialog is "Quit" then return
+			if button returned of _dialog is "Quit" then return false
 		end if
 	end tell
 
@@ -51,7 +51,7 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	end try
 
 	view_pdf of _root given synctex:synctexBool, tex_program:_tex_program, synctex_line:_tex_position, synctex_file:_filename
-
+	return true
 end typeset
 
 ------ Extract directives ------
