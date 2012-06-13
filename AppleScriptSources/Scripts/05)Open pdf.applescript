@@ -6,13 +6,13 @@ on main()
 	set typeset_lib to load script POSIX file typeset_lib_file
 
 	tell typeset_lib
-		set _doc to get_front_BBEdit_doc()
-		set _filename to get_filename for _doc
+		set doc to get_front_BBEdit_doc()
+		set filename to get_filename for doc
 	end tell
-	tell application "BBEdit" to set _tex_position to startLine of selection
+	tell application "BBEdit" to set tex_position to startLine of selection
 	tell typeset_lib
-		set {_root, _tex} to extract_directives out of _filename
-		view_pdf of _root with synctex given tex_program:_tex, synctex_line:_tex_position, synctex_file: _filename
+		set {root, tex} to extract_directives out of filename
+		view_pdf of root with synctex given tex_program:tex, synctex_line:tex_position, synctex_file: filename
 	end tell
 end main
 

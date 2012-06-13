@@ -5,9 +5,9 @@ on main()
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
 	tell typeset_lib
-		set _doc to get_front_BBEdit_doc()
-		set _filename to get_filename for _doc
-		set err_list to parse_errors from _filename with warnings
+		set doc to get_front_BBEdit_doc()
+		set filename to get_filename for doc
+		set err_list to parse_errors from filename with warnings
 	end tell
 
 	if length of err_list is 0 then
