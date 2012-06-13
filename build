@@ -15,30 +15,68 @@ fi
 
 # go to directory containing this script
 cd $( dirname "${BASH_SOURCE[0]}" )
-
+cd AppleScriptSources || error_exit "Error: Unable to find AppleScriptSources directory"
 
 # Check for tex location
 # ----------------------
-echo -n "Locating tex binaries..."
-if texbin=$( which pdflatex ); then
-    texbin=${texbin%pdflatex}
-    echo $texbin
+echo -n "Locating tex binaries...."
+if bin=$( which pdflatex ); then
+    bin=${bin%pdflatex}
+    echo $bin
 else
-    texbin="/usr/texbin/"
+    bin="/usr/texbin/"
     echo "Not found"
-    echo "Warning: pdflatex directory not found; assuming $texbin"
+    echo "Warning: pdflatex directory not found; assuming $bin"
+    echo "The typsetting script may not work"
+    echo
 fi
 
-if [ $texbin != "/usr/texbin/" ]; then
+if [ $bin != "/usr/texbin/" ]; then
     echo -n "Editing AppleScript to use custom tex path..."
-    # sed -i '' 's!/usr/texbn/!'"${texbin}"'!g' FILENAME
-    # echo "Done"
-    echo "NOT YET FUNCTIONAL"
+    sed -i '' 's!^property texbin.*$!property texbin : "'"${bin}"'"!g' "Resources/typeset-lib.applescript"
+    echo "Done"
 fi
+
+
+# Check for chktex location
+# ----------------------
+echo -n "Locating chktex script..."
+if bin=$( which chktex ); then
+    bin=${bin%chktex}
+    echo $bin
+else
+    bin="/usr/texbin/"
+    echo "Not found"
+    echo "Warning: chktex directory not found; assuming $bin"
+    echo "You can install chktex using homebrew"
+    echo "  $ brew install chktex"
+    echo "or macports"
+    echo "  $ sudo port install texlive-bin-extra"
+    echo "Only the \"Check Latex Semantics\" script depends on chktex"
+    echo
+fi
+
+if [ $bin != "/usr/texbin/" ]; then
+    echo -n "Editing AppleScript to use custom chktex path..."
+    sed -i '' 's!^property chktexbin.*$!property chktexbin : "'"${bin}"'"!g' "Scripts/Tools/Check Latex Semantics.applescript"
+    echo "Done"
+fi
+
+# Check for git location
+# ----------------------
+if bin=$( which git ); then
+    bin=${bin%git}
+else
+    bin="/usr/local/bin/"
+fi
+
+if [ $bin != "/usr/local/bin/" ]; then
+    sed -i '' 's!^property gitbin.*$!property gitbin : "'"${bin}"'"!g' "Resources/typeset-lib.applescript"
+fi
+
 
 # Compile AppleScript sources
 # ---------------------------
-cd AppleScriptSources || error_exit "Error: Unable to find AppleScriptSources directory"
 
 # create directories if necessary
 find . -type d | while read directory

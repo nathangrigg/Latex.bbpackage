@@ -1,4 +1,4 @@
-property texbin: "/usr/texbin/"
+property chktexbin : "/usr/texbin/"
 
 (*
 ChkTeX for BBEdit
@@ -18,12 +18,6 @@ Minor edits by Nathan Grigg
 *)
 
 on run
-	-- these lines can be deleted
-	-- they just change the chktex path if necessary
-	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
-	set typeset_lib to load script POSIX file typeset_lib_file
-	set my texbin to typeset_lib's texbin
-	--- end deletable lines
 	my ChkteX()
 end run
 
@@ -84,7 +78,7 @@ on ChkteX()
 		%t Part of line after error (‘S’ + 1).
 *)
 
-	set command to "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of texFileDir & " ; "
+	set command to "PATH=$PATH:" & quoted form of chktexbin & " ; cd " & quoted form of texFileDir & " ; "
 	set command to command & "chktex -q -f \"%k%b%l%b%m%b%f%b%c%b%s"
 	set command to command & newline & "\" " & quoted form of texFileName
 	try
@@ -166,14 +160,3 @@ on ChkteX()
 	end tell
 
 end ChkteX
-
-on path_to_contents()
-	--- Returns path to "Contents" folder containing the current script
-	local delims, split_string
-	set delims to AppleScript's text item delimiters
-	set AppleScript's text item delimiters to "/Contents/"
-	set split_string to text items of POSIX path of (path to me)
-	set AppleScript's text item delimiters to delims
-	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
-	return (item 1 of split_string) & "/Contents/"
-end path_to_contents
