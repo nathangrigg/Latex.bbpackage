@@ -178,8 +178,9 @@ on handle_latex_error from _filename given errMessage:errMsg
 		if button returned of _dialog is "Go to Error" then
 			set _doc to open result_file of _err
 			-- special handling of undefined control sequence
-			if length of (message of _err) > 26 and text 1 through 26 of (message of _err) is "Undefined control sequence" then
-				find (text 28 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
+			-- be a little careful to escape the backslash for BBEdit
+			if message of _err begins with "Undefined control sequence \\" then
+				find ("\\\\" & text 29 through -2 of (message of _err)) searching in line (result_line of _err) of _doc with selecting match
 				if not found of result then tell _doc to select line (result_line of _err)
 			else
 				tell _doc to select line (result_line of _err)
