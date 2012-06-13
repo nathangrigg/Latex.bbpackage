@@ -45,7 +45,8 @@ on typeset given synctex:synctexBool, gitinfo:gitinfoBool
 	-- run the pdflatex script
 	try
 		do shell script "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of root_folder & " ; " & tex_program & " -interaction=batchmode -synctex=1 " & script_suffix
-	on error errMsg
+	on error errMsg number errNum
+		if errNum is 127 then command_not_found(tex_program)
 		handle_latex_error from root given errMessage:errMsg
 		return false
 	end try
@@ -82,8 +83,14 @@ on git_log for folder_name
 	-- get revision information from git
 	try
 		set git_info to do shell script "PATH=$PATH:" & quoted form of gitbin & "; cd " & quoted form of folder_name & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
-	on error number 128
-		error "Cannot find git revision information. Check that the file is inside a repository." number 5033
+	on error errMsg number errNum
+		if errNum is 127 then
+			command_not_found("git")
+		else if errNum is 128 then
+			error "Cannot find git revision information. Check that the file is inside a repository." number 5033
+		else
+			error errMsg number errNum
+		end if
 	end try
 	return git_info
 end git_log
@@ -267,6 +274,10 @@ on change_extension of filename into ext
 	set AppleScript's text item delimiters to delims
 	return new_name
 end change_extension
+
+on command_not_found(command_name)
+	error "Shell command not found: " & command_name number 5033
+end command_not_found
 
 on path_to_contents()
 	--- Returns path to "Contents" folder containing the current script

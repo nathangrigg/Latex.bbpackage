@@ -12,7 +12,11 @@ on main()
 end main
 
 on get_tex_docs for package_name from texbin
-	set stdout to do shell script "PATH=$PATH:" & quoted form of texbin & " ; texdoc " & (quoted form of package_name)
+	try
+		set stdout to do shell script "PATH=$PATH:" & quoted form of texbin & " ; texdoc " & (quoted form of package_name)
+	on error number 127
+		error "Shell command not found: texdoc" number 5033
+	end try
 	if stdout is not "" then error stdout number 5033
 end get_tex_docs
 
