@@ -1,0 +1,84 @@
+(* This file consists of snippets that are reused in several
+   of the AppleScripts, but which are not big enough to warrant
+   calling from an external library
+*)
+
+
+
+(* --------------------------------
+	path_to_contents handler
+
+	returns path to "Contents" folder so that one
+	script can reference another
+   -------------------------------- *)
+
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents
+
+
+(* --------------------------------
+	error handling wrapper
+
+	catches my custom errors:
+		5033: Error with dialog box
+		5088: Error with beep
+
+	also ignores -128 "User cancelled"
+
+	all other errors are re-raised
+
+	When debugging, it is useful to run main() directly so that
+	AppleScript Editor will select the offending code when an
+	error occurs.
+   -------------------------------- *)
+
+-- Catch and display custom errors; exit silently on cancelled dialogs
+try
+	main()
+on error eStr number eNum partial result rList from badObj to exptectedType
+	if eNum = 5033 then
+		display dialog eStr buttons {"OK"} with title "Error" default button 1
+	else if eNum = 5088 then
+		beep
+	else if eNum is not -128 then
+		error eStr number eNum partial result rList from badObj to exptectedType
+	end if
+end try
+
+
+(* --------------------------------
+	get_front_BBEdit_doc handler
+
+	returns front BBEdit document, raising an error if there isn't one
+   -------------------------------- *)
+on get_front_BBEdit_doc()
+	-- get front document, with error if there is none
+	try
+		tell application "BBEdit" to set doc to document 1
+	on error number -1728
+		error "There is no open BBEdit document" number 5033
+	end try
+	return doc
+end get_front_BBEdit_doc
+
+
+(* --------------------------------
+	get_filename handler
+
+	returns the POSIX path to a BBEdit document,
+	raising an error if in cannot get one
+   -------------------------------- *)
+on get_filename for doc
+	-- get filename from BBEdit document object, with error on missing value
+	tell application "BBEdit" to set doc_file to file of doc
+	if doc_file is missing value then error "Cannot access filename of document.\r\rCheck that it is saved on your local machine and not inside a zip file." number 5033
+	return POSIX path of (doc_file as alias)
+end get_filename
