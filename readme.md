@@ -25,14 +25,18 @@ Clone the git repository from the command line
     $ cd Packages
     $ git clone git://github.com/nathan11g/Latex.bbpackage.git
 
+Then compile the AppleScripts
+
+    $ cd Latex.bbpackage
+    $ ./build
+
 Since, at that point, you're already in the proper directory, you may want to
-open up the README markdown document, and INSTALL shell worksheet (to install
-software this package depends on)
+open up the README markdown document.
 
-	$ bbedit Latex.bbpackage/readme.md
-	$ bbedit Latex.bbpackage/install.worksheet
+	$ bbedit readme.md
 
-Use `git pull` to download an updated version of the package.
+Use `git pull` to download an updated version of the package. You will
+need to run the `build` script after each update.
 
 
 # Contents
