@@ -6,13 +6,15 @@ on main()
 	-- get texbin from the typeset script
 	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
 	set typeset_lib to load script POSIX file typeset_lib_file
-	set texbin to typeset_lib's texbin
 	display dialog "Which package would you like documentation for?" default answer package_name
 	set package_name to text returned of result
+	get_tex_docs for package_name from typeset_lib's texbin
+end main
 
+on get_tex_docs for package_name from texbin
 	set stdout to do shell script "PATH=$PATH:" & quoted form of texbin & " ; texdoc " & (quoted form of package_name)
 	if stdout is not "" then error stdout number 5033
-end main
+end get_tex_docs
 
 try
 	main()
