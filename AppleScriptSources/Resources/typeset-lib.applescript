@@ -217,6 +217,12 @@ on view_pdf of filename given synctex:synctexBool, tex_program:tex, synctex_line
 	end if
 
 	set pdf to change_extension of filename into extension
+	-- test for existence of pdf file
+	try
+		POSIX file pdf as alias
+	on error number -1700
+		error "File " & pdf & " does not exist." number 5033
+	end try
 
 	if viewer is "Skim" then
 		try
