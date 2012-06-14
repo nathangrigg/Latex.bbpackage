@@ -1,52 +1,42 @@
--- by Nathan Grigg
+(* by Nathan Grigg
 
-property typeset_script_name : "00)Typeset.scpt"
+To use "Typeset inserting git info" script:
 
--- get file information
-tell application "BBEdit"
-	try
-		set _doc to front document
-		set _filename to file of _doc
-		set _delims to AppleScript's text item delimiters
-		set AppleScript's text item delimiters to "/"
-		set _path to (text items 1 thru -2 of POSIX path of _filename) as string
-		set AppleScript's text item delimiters to _delims
-	on error
-		display dialog "I cannot find an open BBEdit document" buttons {"Quit"} default button "Quit"
-		return
-	end try
-end tell
+1. In your preamble, insert \providecommand{\RevisionInfo}{}
+2. In the text, insert \RevisionInfo
 
+The result:
 
--- get revision information from git
+- When you run normal latex, there will be no revision info
+- When you run this script, \RevisionInfo will be replaced with the info
+*)
+
+on main()
+	set typeset_lib_file to path_to_contents() & "Resources/typeset-lib.scpt"
+	set typeset_lib to load script POSIX file typeset_lib_file
+	tell typeset_lib to typeset with gitinfo without synctex
+end main
+
+-- Catch and display custom errors; exit silently on cancelled dialogs
 try
-	set _info to do shell script "cd " & quoted form of _path & "; " & "git log -1 --date=short --format=format:'\\newcommand{\\RevisionInfo}{Revision %h on %ad}'"
-on error
-	display dialog "Cannot find git revision information. Check that the file is inside a repository." buttons {"Quit"} default button "Quit"
-	return
+	main()
+on error eStr number eNum partial result rList from badObj to exptectedType
+	if eNum = 5033 then
+		display dialog eStr buttons {"OK"} with title "Error" default button 1
+	else if eNum = 5088 then
+		beep
+	else if eNum is not -128 then
+		error eStr number eNum partial result rList from badObj to exptectedType
+	end if
 end try
 
-try
-	set _path to term(POSIX path of (path to me), "/Contents/")
-on error
-	display dialog "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." buttons {"Quit"} default button "Quit"
-	return
-end try
-
-try
-	set typeset_script to load script POSIX file (_path & "Scripts/" & typeset_script_name as string)
-on error
-	display dialog "Cannot load script \"" & typeset_script_name & "\", which is required." buttons {"Quit"} default button "Quit"
-	return
-end try
-
-set typeset_script's gitinfo to _info
-
-typeset_script's typeset()
-
-on term(str, terminator)
-	set _l to length of terminator
-	set _n to (offset of terminator in str)
-	if _n is 0 then error "Not found in string"
-	return text 1 thru (_l + _n - 1) of str
-end term
+on path_to_contents()
+	--- Returns path to "Contents" folder containing the current script
+	local delims, split_string
+	set delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to "/Contents/"
+	set split_string to text items of POSIX path of (path to me)
+	set AppleScript's text item delimiters to delims
+	if length of split_string = 1 then error "This script must remain inside the Latex BBEdit package because it depends on other scripts in that package." number 5033
+	return (item 1 of split_string) & "/Contents/"
+end path_to_contents

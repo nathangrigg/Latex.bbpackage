@@ -1,9 +1,8 @@
--- set this to the location of chktex
-property texbin: "/usr/texbin/"
+property chktexbin : "/usr/texbin/"
 
 (*
 ChkTeX for BBEdit
-Ramón M. Figueroa-Centeno
+Ram√≥n M. Figueroa-Centeno
 http://www2.hawaii.edu/~ramonf
 
 Version: 1.2
@@ -15,34 +14,12 @@ This AppleScript is released under a Creative Commons Attribution-ShareAlike Lic
 Based on the CSS Syntax Check script for BBEdit by John Gruber:
 http://daringfireball.net/projects/csschecker/
 
+Minor edits by Nathan Grigg
 *)
 
 on run
-	-- The run handler is called when the script is invoked normally,
-	-- such as from BBEdit's Scripts menu.
 	my ChkteX()
 end run
-
-on menuselect()
-	-- The menuselect() handler gets called when the script is invoked
-	-- by BBEdit as a menu script. Save this script, or an alias to it,
-	-- as "Check•Document Syntax" in the "Menu Scripts" folder in your
-	-- "BBEdit Support" folder.
-	tell application "BBEdit"
-		-- returning true value stops action from continuing
-		-- false makes the menu action continue
-		try
-			if (source language of window 1 is "TeX") then
-				-- It's a TeX file, so tell BBEdit *not* to
-				-- continue with its HTML syntax check:
-				my ChkteX()
-				return true
-			else
-				return false
-			end if
-		end try
-	end tell
-end menuselect
 
 on ChkteX()
 	tell application "BBEdit"
@@ -65,7 +42,7 @@ on ChkteX()
 		set texFile to file of active document of text window 1
 		set texFileName to the name of the active document of text window 1
 		if the source language of the active document of text window 1 is not "TeX" then
-			display dialog "The source language of the document is not “TeX”!" buttons {"Sorry"} default button 1 with icon stop
+			display dialog "The source language of the document is not ‚ÄúTeX‚Äù!" buttons {"Sorry"} default button 1 with icon stop
 			return
 		end if
 
@@ -95,13 +72,13 @@ on ChkteX()
 		%l line number of error.
 		%m Warning message.
 		%n Warning number.
-		%u An underlining line (like the one which appears when using “-v1”).
-		%r Part of line in front of error (‘S’ - 1).
+		%u An underlining line (like the one which appears when using ‚Äú-v1‚Äù).
+		%r Part of line in front of error (‚ÄòS‚Äô - 1).
 		%s Part of line which contains error (string).
-		%t Part of line after error (‘S’ + 1).
+		%t Part of line after error (‚ÄòS‚Äô + 1).
 *)
 
-	set command to "PATH=$PATH:" & quoted form of texbin & " ; cd " & quoted form of texFileDir & " ; "
+	set command to "PATH=$PATH:" & quoted form of chktexbin & " ; cd " & quoted form of texFileDir & " ; "
 	set command to command & "chktex -q -f \"%k%b%l%b%m%b%f%b%c%b%s"
 	set command to command & newline & "\" " & quoted form of texFileName
 	try
@@ -115,7 +92,7 @@ on ChkteX()
 	tell application "BBEdit"
 		if check_result is "" then
 			set document_name to name of document of text window 1
-			display alert "ChkTeX OK" message "No ChkTeX warnings were found in “" & document_name & "”."
+			display alert "ChkTeX OK" message "No ChkTeX warnings were found in ‚Äú" & document_name & "‚Äù."
 			return
 		end if
 

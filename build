@@ -1,0 +1,124 @@
+#! /bin/bash
+
+function error_exit
+{
+	echo "$1" 1>&2
+	exit 1
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Build script for Latex.bbpackage"
+    echo
+    echo "Usage: $0"
+    exit
+fi
+
+# go to directory containing this script
+cd $( dirname "${BASH_SOURCE[0]}" )
+cd AppleScriptSources || error_exit "Error: Unable to find AppleScriptSources directory"
+
+# Check for tex location
+# ----------------------
+echo -n "Locating tex binaries...."
+if bin=$( which pdflatex ); then
+    bin=${bin%pdflatex}
+    echo $bin
+else
+    bin="/usr/texbin/"
+    echo "Not found"
+    echo "Warning: pdflatex directory not found; assuming $bin"
+    echo "The typsetting script may not work"
+    echo
+fi
+
+if [ $bin != "/usr/texbin/" ]; then
+    echo -n "Editing AppleScript to use custom tex path..."
+    sed -i '' 's!^property texbin.*$!property texbin : "'"${bin}"'"!g' "Resources/typeset-lib.applescript"
+    echo "Done"
+fi
+
+
+# Check for chktex location
+# ----------------------
+echo -n "Locating chktex script..."
+if bin=$( which chktex ); then
+    bin=${bin%chktex}
+    echo $bin
+else
+    bin="/usr/texbin/"
+    echo "Not found"
+    echo "Warning: chktex directory not found; assuming $bin"
+    echo "You can install chktex using homebrew"
+    echo "  $ brew install chktex"
+    echo "or macports"
+    echo "  $ sudo port install texlive-bin-extra"
+    echo "Only the \"Check Latex Semantics\" script depends on chktex"
+    echo
+fi
+
+if [ $bin != "/usr/texbin/" ]; then
+    echo -n "Editing AppleScript to use custom chktex path..."
+    sed -i '' 's!^property chktexbin.*$!property chktexbin : "'"${bin}"'"!g' "Scripts/Tools/Check Latex Semantics.applescript"
+    echo "Done"
+fi
+
+# Check for git location
+# ----------------------
+if bin=$( which git ); then
+    bin=${bin%git}
+else
+    bin="/usr/local/bin/"
+fi
+
+if [ $bin != "/usr/local/bin/" ]; then
+    sed -i '' 's!^property gitbin.*$!property gitbin : "'"${bin}"'"!g' "Resources/typeset-lib.applescript"
+fi
+
+
+# Compile AppleScript sources
+# ---------------------------
+
+# create directories if necessary
+find . -type d | while read directory
+do
+    [ -d "../Contents/$directory" ] || mkdir "../Contents/$directory"
+done
+
+echo -n "Compiling AppleScripts"
+find . -name "*.applescript" | while read file
+do
+    if osacompile -o "../Contents/${file%applescript}scpt" "$file"; then
+       echo -n "."
+    else
+       echo "Error: unable to compile $file"
+    fi
+done
+echo "Done"
+# return to parent directory
+cd ..
+
+# Set stationery bit on stationery
+# --------------------------------
+
+cd Contents/Stationery
+echo -n "Setting stationery bits"
+for f in *
+do
+    # if the file has no xattr's, then add some
+    # this is necessary for the applescript to work
+    xattr "$f" | grep -q 'com\.apple\.FinderInfo' \
+    || xattr -wx com.apple.FinderInfo \
+"54 45 58 54 00 00 00 00 08 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00" "$f"
+
+    # use applescript
+    if osascript -e "tell application \"Finder\" to set stationery of (POSIX file \"$f\" as alias) to true" > /dev/null; then
+        echo -n "."
+    else
+        echo "Error: unable to set stationery bit on $f"
+    fi
+done
+echo "Done"
+# return to parent directory
+cd ../..
+
