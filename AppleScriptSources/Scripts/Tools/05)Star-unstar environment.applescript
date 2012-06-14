@@ -1,6 +1,6 @@
 -- by Nathan Grigg
 
-property delay_time : 0.4
+property delay_time : 0.2
 
 on main()
 	set env_lib_file to path_to_contents() & "Resources/environments-lib.scpt"
