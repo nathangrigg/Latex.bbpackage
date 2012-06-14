@@ -243,7 +243,7 @@ end view_pdf
 
 on skim_reload(pdf)
 	-- this monstrosity allows the rest of the script to work even if Skim is not installed.
-	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set doc to open \"" & pdf & "\"' -e 'revert doc' -e 'end tell'"
+	do shell script "/usr/bin/osascript -e 'tell application \"Skim\"' -e 'set doc to open \"" & pdf & "\"' -e 'if doc is not missing value then revert doc' -e 'end tell'"
 end skim_reload
 
 ------ Get information from BBEdit ------
