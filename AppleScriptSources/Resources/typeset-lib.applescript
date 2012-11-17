@@ -87,7 +87,7 @@ on git_log for folder_name
 		if errNum is 127 then
 			command_not_found("git")
 		else if errNum is 128 then
-			error "Cannot find git revision information. Check that the file is inside a repository." number 5033
+			error errMsg number 5033
 		else
 			error errMsg number errNum
 		end if
