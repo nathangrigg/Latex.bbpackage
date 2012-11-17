@@ -15,7 +15,7 @@ import getopt
 
 re_loghead = re.compile("This is [0-9a-zA-Z-]*")
 re_rerun = re.compile("LaTeX Warning:.*Rerun")
-re_file = re.compile("(\\((?P<file>[^ \n\t(){}]*)|\\))")
+re_file = re.compile("(\\((?P<file>[^\n\t(){}]*)|\\))")
 re_badbox = re.compile(r"(Ov|Und)erfull \\[hv]box ")
 re_line = re.compile(r"(l\.(?P<line>[0-9]+)( (?P<code>.*))?$|<\*>)")
 re_cseq = re.compile(r".*(?P<seq>(\\|\.\.\.)[^ ]*) ?$")
