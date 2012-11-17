@@ -379,7 +379,7 @@ def parse_options(cmdline):
         opts, args = getopt.getopt(
             cmdline, "h", ["boxes","errors","help","refs","warnings"])
     except getopt.GetoptError, e:
-        sys.stderr.write(e)
+        sys.stderr.write(e.msg + "\n")
         sys.exit(1)
 
     d = {"boxes": 0, "errors": 0, "refs": 0, "warnings": 0}
@@ -394,7 +394,7 @@ def parse_options(cmdline):
             d[opt[2:]] = 1
 
     if len(args) != 1:
-        sys.stderr.write("One log file is required")
+        sys.stderr.write("One log file is required\n")
         sys.exit(1)
     file = args[0]
 
