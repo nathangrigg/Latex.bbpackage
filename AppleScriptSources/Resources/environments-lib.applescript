@@ -60,6 +60,10 @@ on balance_environment given ending:endBool
 
 				if found of match_end then
 					set end_loc to characterOffset of found object of match_end
+					-- When looking for match without ending, don't go past cursor location
+					if not endBool and end_loc > cursor_loc then
+						return {env, begin_loc, missing value, cursor_loc, doc}
+					end if
 				else
 					if endBool then
 						error "Found '\\begin{" & env & "}' but no '\\end{" & env & "}'." number 5088
