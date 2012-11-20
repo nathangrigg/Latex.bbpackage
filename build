@@ -112,7 +112,7 @@ do
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00" "$f"
 
     # use applescript
-    if osascript -e "tell application \"Finder\" to set stationery of (POSIX file \"$f\" as alias) to true" > /dev/null; then
+    if osascript -e "tell application \"Finder\" to set stationery of (POSIX file \"$f\" as alias) to true" > /dev/null 2>&1; then
         echo -n "."
     else
         echo "Error: unable to set stationery bit on $f"
