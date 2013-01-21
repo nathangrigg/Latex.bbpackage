@@ -142,7 +142,7 @@ on parse_errors from filename given warnings:warningsBool
 				try
 					set error_file to POSIX file filename as alias
 				on error
-					error "The log referenced an unknown file." number 5033
+					error "The log referenced an unknown file. (" & filename & ")" number 5033
 				end try
 				set error_line_str to text item 3 of err
 				set error_description to text items 4 thru -1 of err as text
