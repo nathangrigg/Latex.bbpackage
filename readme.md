@@ -6,8 +6,8 @@ A collection of scripts and clippings used to write Latex in BBEdit.
 
 ## Package only
 
-Download the package at <http://nb.nathanamy.org/latex-bbpackage>, open
-the disk image, and drag the `Latex.bbpackage` package onto the BBEdit
+Download the package at <http://nb.nathanamy.org/latex-bbpackage>, expand
+the archive, and drag the `Latex.bbpackage` package onto the BBEdit
 dock icon.
 
 Repeat the process to install an updated version of the package.
@@ -37,7 +37,6 @@ open up the README markdown document.
 
 Use `git pull` to download an updated version of the package. You will
 need to run the `build` script after each update.
-
 
 # Contents
 
