@@ -6,7 +6,7 @@ A collection of scripts and clippings used to write Latex in BBEdit.
 
 ## Package only
 
-Download the package at <http://nb.nathanamy.org/latex-bbpackage>, expand
+Download the package at <http://nathangrigg.net/latex-bbpackage>, expand
 the archive, and drag the `Latex.bbpackage` package onto the BBEdit
 dock icon.
 
@@ -16,14 +16,14 @@ Requires BBEdit 10.1 or newer.
 
 ## Full git repository
 
-The Latex.bbpackage project is hosted at <http://github.com/nathan11g/Latex.bbpackage>.
+The Latex.bbpackage project is hosted at <http://github.com/nathangrigg/Latex.bbpackage>.
 
 Clone the git repository from the command line
 
     $ cd Library/Application\ Support/BBEdit/
     $ mkdir Packages # if it doesn't already exist
     $ cd Packages
-    $ git clone git://github.com/nathan11g/Latex.bbpackage.git
+    $ git clone git://github.com/nathangrigg/Latex.bbpackage.git
 
 Then compile the AppleScripts
 
@@ -102,4 +102,4 @@ on any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 
 [rubber]: https://launchpad.net/rubber/
-[wiki]: https://github.com/nathan11g/Latex.bbpackage/wiki
+[wiki]: https://github.com/nathangrigg/Latex.bbpackage/wiki
