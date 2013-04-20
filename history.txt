@@ -1,4 +1,7 @@
-Current version: 1.4.1
+Current version: 1.4.2
+1.4.2
+    Fix documentation
+
 1.4.1
     Bug fix: filename extraction from log was picking up extra spaces
 
