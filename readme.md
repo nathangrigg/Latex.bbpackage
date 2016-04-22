@@ -1,3 +1,10 @@
+# This package is not currently maintained
+
+- I haven't tested it on BBEdit 11 or higher.
+- I'm not planning to add new features or fix bugs.
+
+I am happy to accept contributions or fixes from the community.
+
 # Description
 
 A collection of scripts and clippings used to write Latex in BBEdit.
